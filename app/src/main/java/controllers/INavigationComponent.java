@@ -1,4 +1,7 @@
-package models;
+package controllers;
+
+import models.CompassDirection;
+import models.Location;
 
 public interface INavigationComponent {
 

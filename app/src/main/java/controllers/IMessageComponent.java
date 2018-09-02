@@ -1,4 +1,6 @@
-package models;
+package controllers;
+
+import models.Message;
 
 /**
  * interface for messages
@@ -8,7 +10,7 @@ public interface IMessageComponent {
     /**
      * create a message from a string
      * @param message   text string of the message
-     * @return
+     * @return return the created message
      */
     Message createMessage(String message);
 

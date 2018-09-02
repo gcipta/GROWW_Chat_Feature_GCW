@@ -1,4 +1,7 @@
-package models;
+package controllers;
+
+import models.GuideNote;
+import models.Location;
 
 public interface IGuideNoteComponent {
 
