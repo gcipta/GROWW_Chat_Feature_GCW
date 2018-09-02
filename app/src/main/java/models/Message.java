@@ -28,19 +28,39 @@ public class Message {
         this.date = date;
     }
 
+    public Date getDate() {
+        return date;
+    }
+
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getContent() {
+        return content;
     }
 
     public void setSender(User sender) {
         this.sender = sender;
     }
 
+    public User getSender() {
+        return sender;
+    }
+
     public void setRecipient(User recipient) {
         this.recipient = recipient;
     }
 
+    public User getRecipient() {
+        return recipient;
+    }
+
     public void setIsRead(Boolean read) {
         isRead = read;
+    }
+
+    public Boolean getIsRead() {
+        return isRead;
     }
 }
