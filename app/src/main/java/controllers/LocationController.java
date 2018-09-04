@@ -1,6 +1,5 @@
 package controllers;
 
-import models.ILocationComponent;
 import models.Location;
 
 public class LocationController implements ILocationComponent {
