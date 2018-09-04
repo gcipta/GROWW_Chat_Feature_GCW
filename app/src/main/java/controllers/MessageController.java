@@ -1,6 +1,6 @@
 package controllers;
 
-import models.IMessageComponent;
+import controllers.IMessageComponent;
 import models.Message;
 
 public class MessageController implements IMessageComponent {
