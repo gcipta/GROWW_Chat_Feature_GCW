@@ -1,7 +1,6 @@
 package controllers;
 
 import models.CompassDirection;
-import models.INavigationComponent;
 import models.Location;
 
 public class NavigationController implements INavigationComponent {

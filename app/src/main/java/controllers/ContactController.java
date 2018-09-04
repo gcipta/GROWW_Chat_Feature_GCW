@@ -1,6 +1,5 @@
 package controllers;
 
-import models.IContactComponent;
 import models.User;
 
 public class ContactController implements IContactComponent {

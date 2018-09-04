@@ -1,7 +1,6 @@
 package controllers;
 
 import models.GuideNote;
-import models.IGuideNoteComponent;
 import models.Location;
 
 public class GuideNoteController implements IGuideNoteComponent {
