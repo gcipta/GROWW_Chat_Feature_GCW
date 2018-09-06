@@ -10,7 +10,6 @@ public class MainActivity extends AppCompatActivity {
 
     Button button;
     Button signUpButton;
-    Button helpeeButton;
 
     public void goToMap() {
 
@@ -26,15 +25,6 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void goToSignUpAsHelpee() {
-
-        Intent intent = new Intent(this, SignUpHelpee.class);
-
-        startActivity(intent);
-    }
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,8 +33,6 @@ public class MainActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.button);
 
         signUpButton = (Button) findViewById(R.id.signUpButton);
-
-        helpeeButton = (Button) findViewById(R.id.helpeeButton);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,13 +49,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        helpeeButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                goToSignUpAsHelpee();
-            }
-        });
     }
 
 }
