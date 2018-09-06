@@ -1,6 +1,7 @@
 package controllers;
 
-import models.Location;
+import android.location.Geocoder;
+import android.location.Location;
 
 public interface ILocationComponent {
 
@@ -16,4 +17,18 @@ public interface ILocationComponent {
      * @return  return the location
      */
     Location getLocation();
+
+    /**
+     * set the location from a phone
+     * @param location
+     */
+    void setLocation(Location location);
+
+    /**
+     * Return the user's address details.
+     * @return user's address
+     */
+    String showDetails();
+
+
 }
