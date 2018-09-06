@@ -2,6 +2,7 @@ package com.example.gavv.my_groww_project;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,6 +13,9 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.Manifest;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,6 +24,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.Locale;
+
+import controllers.LocationController;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
@@ -27,6 +35,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    private Button showDetailsButton;
+
+    private LocationController userLocationController;
+
+
+    /**
+     * A function to listen to the GPS provider.
+     */
     public void startListening() {
 
         if (ContextCompat.checkSelfPermission(this,
@@ -38,15 +54,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void centerMapOnLocation(Location location, String title) {
+    /**
+     * Set the map on the location.
+     * @param title Title of the marker.
+     */
+    public void centerMapOnLocation(String title) {
 
-        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+        Location location = userLocationController.getLocation();
+        LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
         mMap.clear();
 
-        mMap.addMarker(new MarkerOptions().position(userLocation).title(title));
+        mMap.addMarker(new MarkerOptions().position(userLatLng).title(title));
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
 
     }
 
@@ -65,10 +86,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         0, 0, locationListener);
 
                 // Needed to show the user's location after the permission is granted.
-                Location lastKnownLocation =
-                        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                this.userLocationController.setLocation(
+                        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
 
-                centerMapOnLocation(lastKnownLocation, "Your Location");
+                centerMapOnLocation("Your Location");
 
             }
         }
@@ -82,6 +103,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        showDetailsButton = (Button) findViewById(R.id.showDetailsButton);
+
+        showDetailsButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MapsActivity.this, userLocationController.showDetails(),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
     }
 
@@ -99,13 +131,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
+        Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+
+        // Create the user's location controller.
+        userLocationController = new LocationController(geocoder);
+
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         locationListener = new LocationListener() {
             @Override
             public void onLocationChanged(android.location.Location location) {
 
-                centerMapOnLocation(location, "Your Location");
+                userLocationController.setLocation(location);
+                centerMapOnLocation("Your Location");
+
             }
 
             @Override
@@ -146,12 +185,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         5000, 0, locationListener);
 
-                Location location =
-                        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                centerMapOnLocation(location, "Your Location");
-                if (location != null) {
-                    centerMapOnLocation(location, "Your Location");
+                this.userLocationController.setLocation(locationManager.
+                        getLastKnownLocation(LocationManager.GPS_PROVIDER));
+
+                centerMapOnLocation(
+                        "Your Location");
+                if (this.userLocationController.getLocation() != null) {
+                    centerMapOnLocation("Your Location");
                 }
             }
         }
