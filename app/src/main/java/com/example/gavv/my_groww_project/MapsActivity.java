@@ -1,10 +1,17 @@
 package com.example.gavv.my_groww_project;
 
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.Manifest;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -20,9 +27,51 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    public void startListening() {
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+
+            locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        }
+    }
+
+    public void centerMapOnLocation(Location location, String title) {
+
+        LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
+
+        mMap.clear();
+
+        mMap.addMarker(new MarkerOptions().position(userLocation).title(title));
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 15));
+
+    }
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) ==
+                    PackageManager.PERMISSION_GRANTED) {
+
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        0, 0, locationListener);
+
+                // Needed to show the user's location after the permission is granted.
+                Location lastKnownLocation =
+                        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                centerMapOnLocation(lastKnownLocation, "Your Location");
+
+            }
+        }
     }
 
     @Override
@@ -33,6 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
     }
 
 
@@ -49,9 +99,63 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        locationListener = new LocationListener() {
+            @Override
+            public void onLocationChanged(android.location.Location location) {
+
+                centerMapOnLocation(location, "Your Location");
+            }
+
+            @Override
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+
+            }
+
+            @Override
+            public void onProviderEnabled(String provider) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String provider) {
+
+            }
+        };
+
+        // If the device running SDK < 23
+        if (Build.VERSION.SDK_INT < 23) {
+
+            startListening();
+
+        } else {
+
+            // Check the permission to share the location.
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION) !=
+                    PackageManager.PERMISSION_GRANTED) {
+
+                // Asking for permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            } else {
+
+                // We have permissions.
+                // Update the location based on the GPS.
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        5000, 0, locationListener);
+
+                Location location =
+                        locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                centerMapOnLocation(location, "Your Location");
+                if (location != null) {
+                    centerMapOnLocation(location, "Your Location");
+                }
+            }
+        }
+
+
     }
 }
