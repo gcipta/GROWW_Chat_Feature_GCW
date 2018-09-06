@@ -15,4 +15,5 @@
         completions."
     </string>
     <string name="title_activity_sign_up_helpee">SignUpHelpee</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
