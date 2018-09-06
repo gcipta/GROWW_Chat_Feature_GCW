@@ -15,14 +15,14 @@
         android:layout_marginLeft="17dp"
         android:layout_marginRight="17dp"
         android:layout_marginStart="17dp"
-        android:layout_marginTop="147dp"
+        android:layout_marginTop="18dp"
         android:ems="10"
         android:hint="First Name"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/lastName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
         app:layout_constraintVertical_chainStyle="packed" />
 
     <EditText
@@ -47,7 +47,7 @@
         android:id="@+id/email"
         android:layout_width="350dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="244dp"
+        android:layout_marginBottom="22dp"
         android:layout_marginEnd="17dp"
         android:layout_marginLeft="17dp"
         android:layout_marginRight="17dp"
@@ -56,25 +56,60 @@
         android:ems="10"
         android:hint="Email Address"
         android:inputType="textEmailAddress"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/signUpHelpeePassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/lastName" />
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="34dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="16dp"
         android:text="Helpee Sign Up"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="16dp" />
+        app:layout_constraintBottom_toTopOf="@+id/firstName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/helpeeSignUp"
         android:layout_width="350dp"
-        android:layout_height="wrap_content"
+        android:layout_height="47dp"
+        android:layout_marginBottom="48dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="19dp"
         android:text="Sign Up!"
-        tools:layout_editor_absoluteX="19dp"
-        tools:layout_editor_absoluteY="393dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signUpHelpeePassword" />
+
+    <EditText
+        android:id="@+id/signUpHelpeePassword"
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="22dp"
+        android:layout_marginEnd="17dp"
+        android:layout_marginLeft="17dp"
+        android:layout_marginRight="17dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="19dp"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintBottom_toTopOf="@+id/helpeeSignUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
 
 </android.support.constraint.ConstraintLayout>
