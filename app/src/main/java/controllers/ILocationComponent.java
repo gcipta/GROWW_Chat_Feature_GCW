@@ -16,19 +16,34 @@ public interface ILocationComponent {
      * get the location from a phone
      * @return  return the location
      */
-    Location getLocation();
+    Location getUserLocation();
 
     /**
      * set the location from a phone
      * @param location
      */
-    void setLocation(Location location);
+    void setUserLocation(Location location);
+
+    Location getDestinationLocation();
+
+    void setDestinationLocation(Location location);
+
+    /**
+     * Return the address details.
+     * @return address
+     */
+    String getLocationDetails(Location location);
 
     /**
      * Return the user's address details.
-     * @return user's address
+     * @return destinations' address
      */
-    String showDetails();
 
+    String getDestinationDetails();
 
+    /**
+     * Return the address details.
+     * @return address
+     */
+    String getUserLocationDetails();
 }

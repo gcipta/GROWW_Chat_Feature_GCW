@@ -7,12 +7,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class LocationController implements ILocationComponent {
 
     Location userLocation;
     Geocoder userGeocoder;
+    Location destinationLocation;
+
+    String address = "";
 
     public LocationController(Geocoder geocoder) {
 
@@ -23,25 +28,37 @@ public class LocationController implements ILocationComponent {
     }
 
     @Override
-    public Location getLocation() {
+    public Location getUserLocation() {
 
         return this.userLocation;
     }
 
     @Override
-    public void setLocation(Location location) {
+    public void setUserLocation(Location location) {
 
         this.userLocation = location;
     }
 
     @Override
-    public String showDetails() {
+    public Location getDestinationLocation() {
 
-        String address = "";
+        return this.destinationLocation;
+    }
+
+    @Override
+    public void setDestinationLocation(Location location) {
+        this.destinationLocation = location;
+    }
+
+    @Override
+    public String getLocationDetails(Location location) {
+
+        // Reset the address
+        address = "";
 
         try {
-            List<Address> listAddresses = userGeocoder.getFromLocation(userLocation.getLatitude(),
-                   userLocation.getLongitude(), 1);
+            List<Address> listAddresses = userGeocoder.getFromLocation(location.getLatitude(),
+                   location.getLongitude(), 1);
 
             if (listAddresses != null && listAddresses.size() > 0) {
 
@@ -73,6 +90,32 @@ public class LocationController implements ILocationComponent {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return address;
+    }
+
+    @Override
+    public String getDestinationDetails() {
+
+        if (this.destinationLocation != null) {
+            return getLocationDetails(this.destinationLocation);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        address = sdf.format(new Date());
+
+        return address;
+    }
+
+    @Override
+    public String getUserLocationDetails() {
+
+        if (this.userLocation != null) {
+            return getLocationDetails(this.userLocation);
+        }
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        address = sdf.format(new Date());
 
         return address;
     }
