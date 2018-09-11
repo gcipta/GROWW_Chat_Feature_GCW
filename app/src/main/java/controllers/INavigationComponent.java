@@ -24,5 +24,5 @@ public interface INavigationComponent {
      * display the compass direction to the UI
      * @param direc the compass direction to be displayed
      */
-
+    void displayCompassDirection(CompassDirection direc);
 }
