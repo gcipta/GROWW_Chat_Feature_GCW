@@ -100,7 +100,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(midLat, midLng),
                         15));
-            } else if (destinationLocation == null) {
+            } else  {
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
             }
@@ -188,6 +188,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap = googleMap;
 
         mMap.setOnMapLongClickListener(this);
+        mMap.setOnMarkerDragListener(this);
 
         Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
 
