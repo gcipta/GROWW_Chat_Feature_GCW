@@ -1,10 +1,18 @@
 package controllers;
 
+import com.google.android.gms.maps.GoogleMap;
+
 import models.CompassDirection;
 import models.Location;
 
 public class NavigationController implements INavigationComponent {
 
+    private GoogleMap mMap;
+
+    public NavigationController(GoogleMap mMap) {
+
+        this.mMap = mMap;
+    }
 
     @Override
     public CompassDirection setCompass(Location helpee, Location target) {

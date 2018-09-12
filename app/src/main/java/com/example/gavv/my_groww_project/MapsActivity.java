@@ -150,8 +150,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(MapsActivity.this, userLocationController.getUserLocationDetails(),
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(MapsActivity.this,
+                        userLocationController.getUserLocationDetails(), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -196,7 +196,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         userLocationController = new LocationController(geocoder);
 
         // Construct navigation controller.
-        navigationController = new NavigationController();
+        navigationController = new NavigationController(this.mMap);
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
