@@ -20,4 +20,19 @@ public class NavigationController implements INavigationComponent {
     public void displayCompassDirection(CompassDirection direc) {
 
     }
+
+    @Override
+    public String getDirectionsUrl(Location userLocation, Location destinationLocation) {
+        StringBuilder url = new StringBuilder("https://route.api.here.com/routing/7.2/" +
+                "calculateroute.json?app_id=vasjqUzfKhzOc7gUXhlq&app_code=QFDsWEGLzcT29CPk3HT5Gg");
+
+        url.append("&waypoint0=geo!" + userLocation.getLatitude() + "," +
+                userLocation.getLongitude());
+        url.append("&waypoint1=geo!" + destinationLocation.getLatitude() + "," +
+                destinationLocation.getLongitude());
+        url.append("&departure=now&mode=fastest;");
+        url.append("pedestrian;traffic:disabled");
+
+        return url.toString();
+    }
 }

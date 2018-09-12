@@ -13,6 +13,12 @@ import java.nio.charset.Charset;
 
 public class DownloadJsonApi {
 
+    /**
+     * A function to read characters inside a JSON file.
+     * @param rd
+     * @return
+     * @throws IOException
+     */
     private static String readAll(Reader rd) throws IOException {
         StringBuilder sb = new StringBuilder();
         int cp;
@@ -22,6 +28,13 @@ public class DownloadJsonApi {
         return sb.toString();
     }
 
+    /**
+     * Download JSON file from the provided URL.
+     * @param url
+     * @return
+     * @throws IOException
+     * @throws JSONException
+     */
     public static JSONObject readJsonFromUrl(String url) throws IOException, JSONException {
         InputStream is = new URL(url).openStream();
         try {
