@@ -1,7 +1,15 @@
 package controllers;
 
+import android.graphics.Color;
+import android.location.Location;
+
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+
+import java.util.List;
+
 import models.CompassDirection;
-import models.Location;
 
 public interface INavigationComponent {
 
@@ -30,13 +38,11 @@ public interface INavigationComponent {
     void displayCompassDirection(CompassDirection direc);
 
     /**
-     * construct the URL to do a REST call.
-     *
-     *
+     * display the direction from the user's location to the destination on the map.
      * @param userLocation
      * @param destinationLocation
-     * @return url to get the JSON API.
      */
-    String getDirectionsUrl(Location userLocation, Location destinationLocation);
+    Polyline displayDirection(Location userLocation, Location destinationLocation);
+
 
 }

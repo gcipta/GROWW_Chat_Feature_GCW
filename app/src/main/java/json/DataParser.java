@@ -42,11 +42,11 @@ public class DataParser {
     }
 
     /**
-     *
+     * Get the paths to the destination and store it as a list of LatLng.
      * @param maneuverJson
-     * @return
+     * @return a list of LatLng from the source to the destination.
      */
-    public List<LatLng> getPaths(JSONArray maneuverJson) {
+    private List<LatLng> getPaths(JSONArray maneuverJson) {
 
         int count = maneuverJson.length();
         List<LatLng> latLngRoutes= new ArrayList<LatLng>();

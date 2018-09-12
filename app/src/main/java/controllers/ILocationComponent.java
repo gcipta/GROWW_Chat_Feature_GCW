@@ -24,8 +24,16 @@ public interface ILocationComponent {
      */
     void setUserLocation(Location location);
 
+    /**
+     * set the destination location
+     * @return
+     */
     Location getDestinationLocation();
 
+    /**
+     * get the destination location
+     * @param location
+     */
     void setDestinationLocation(Location location);
 
     /**

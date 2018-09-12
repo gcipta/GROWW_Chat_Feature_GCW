@@ -1,7 +1,6 @@
 package com.example.gavv.my_groww_project;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -9,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -28,6 +28,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -48,9 +49,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private Button showUserLocationDetailsButton;
     private Button showDestinationLocationDetailsButton;
+    private Button directionButton;
 
     private LocationController userLocationController;
     private NavigationController navigationController;
+
+    private Polyline direction;
 
 
     /**
@@ -137,11 +141,20 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+        // Need this to be able to download JSON from URL.
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+
+        // Show user's and destination location details.
         showUserLocationDetailsButton = (Button) findViewById(R.id.showUserDetailsButton);
         showDestinationLocationDetailsButton = (Button) findViewById(R.id
                 .showDestinationDetailsButton);
@@ -171,6 +184,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         });
 
+        // Show the direction to the destination.
+        directionButton = (Button) findViewById(R.id.directionButton);
+
+        directionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Ensure the destination is not null.
+                if (userLocationController.getDestinationLocation() != null) {
+
+                    // Find the destination
+                    direction = navigationController.displayDirection(
+                            userLocationController.getUserLocation(),
+                            userLocationController.getDestinationLocation());
+                }
+            }
+        });
 
 
     }
@@ -306,6 +336,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMarkerDragStart(Marker marker) {
+
+        // Remove the previous path from the map.
+        if (direction != null) {
+            direction.remove();
+        }
 
     }
 
