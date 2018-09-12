@@ -51,6 +51,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button showDestinationLocationDetailsButton;
     private Button directionButton;
 
+    private Button zoomInButton;
+    private Button zoomOutButton;
+
     private LocationController userLocationController;
     private NavigationController navigationController;
 
@@ -107,7 +110,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(midLat, midLng),
                         15));
             } else  {
-
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
             }
         }
@@ -199,6 +201,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             userLocationController.getUserLocation(),
                             userLocationController.getDestinationLocation());
                 }
+            }
+        });
+
+        // Zoom In and Zoom Out Button
+        zoomInButton = (Button) findViewById(R.id.zoomInButton);
+        zoomOutButton = (Button) findViewById(R.id.zoomOutButton);
+
+        zoomInButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mMap.moveCamera(CameraUpdateFactory.zoomIn());
+            }
+        });
+
+        zoomOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                mMap.moveCamera(CameraUpdateFactory.zoomOut());
             }
         });
 
