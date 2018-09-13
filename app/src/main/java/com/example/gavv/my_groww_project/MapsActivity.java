@@ -220,8 +220,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 mMap.moveCamera(CameraUpdateFactory.zoomIn());
-                int camera_zoom_value = Log.d("Camera Zoom In",
-                        ((Float) (mMap.getCameraPosition().zoom + 1)).toString());
 
             }
         });
@@ -230,8 +228,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 mMap.moveCamera(CameraUpdateFactory.zoomOut());
-                int camera_zoom_value = Log.d("Camera Zoom Out",
-                        ((Float) (mMap.getCameraPosition().zoom - 1)).toString() );
             }
         });
     }

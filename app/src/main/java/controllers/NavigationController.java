@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import json.DataParser;
@@ -31,7 +32,7 @@ public class NavigationController implements INavigationComponent {
     }
 
     /**
-     * construct the URL to do a REST call.
+     * construct the URL to do a REST call to get information about the direction.
      *
      *
      * @param userLocation
@@ -47,19 +48,22 @@ public class NavigationController implements INavigationComponent {
                 + destinationLocation.getLongitude());
         url.append("&key=AIzaSyCkGt3adHi7ynDGF84HLS-ZNSCY8odXhpQ");
 
-//        Log.d("Google URL", googleURL.toString());
-
-//
-//         StringBuilder url = new StringBuilder("http://open.mapquestapi.com/directions/v2/" +
-//                "route?key=swzvFTlzalR1nkyUfc5AVrnZV7ExjCLv&from=");
-//        url.append(userLocation.getLatitude() + "," + userLocation.getLongitude());
-//        url.append("&to=" + destinationLocation.getLatitude() + "," +
-//                destinationLocation.getLongitude());
-
         Log.d("Route URL", url.toString());
 
         return url.toString();
     }
+
+    public String getRoadsUrl(String latLngString) {
+
+        StringBuilder url =
+                new StringBuilder("https://roads.googleapis.com/v1/snapToRoads?path=");
+        url.append(latLngString);
+        url.append("&interpolate=true&key=AIzaSyCkGt3adHi7ynDGF84HLS-ZNSCY8odXhpQ");
+
+        return url.toString();
+    }
+
+
 
     @Override
     public CompassDirection setCompass(Location helpee, Location target) {
@@ -80,28 +84,41 @@ public class NavigationController implements INavigationComponent {
     public Polyline displayDirection(Location userLocation, Location destinationLocation) {
 
         Polyline direction = null;
+        Object objectParse[] = new Object[2];
 
         // Generate the URL
         String url = getDirectionsUrl(userLocation, destinationLocation);
 
         try {
 
-            // Download the routes as a JSON
+            // Download the routes as a JSON.
             DownloadJsonApi downloadJsonApi= new DownloadJsonApi();
             JSONObject routes = downloadJsonApi.readJsonFromUrl(url);
 
             // Parse the routes
             DataParser dataParser = new DataParser();
-            List<LatLng> latLngRoutes = dataParser.parseDirections(routes.toString());
 
-            Log.d("LatLngRoutes", latLngRoutes.toString());
+            Object objectParsed[] = dataParser.parseDirections(routes.toString());
+
+            // Get the routes.
+            List<LatLng> latLngRoutes = (ArrayList<LatLng>) objectParsed[0];
+
+            // Get the roads that the routes pass through.
+            String latLngString = (String) objectParsed[1];
+
+            // Download the roads as a JSON.
+            JSONArray roads = downloadJsonApi.readJsonFromUrl(getRoadsUrl(latLngString))
+                    .getJSONArray("snappedPoints");
+
+            // Get the roads as a list of LatLng.
+            List<LatLng> latLngRoads = dataParser.getRoads(roads, userLocation,
+                    destinationLocation);
 
             direction = mMap.addPolyline(new PolylineOptions()
                     .color(Color.parseColor("#1684FD"))
                     .width(10)
-                    .addAll(latLngRoutes));
+                    .addAll(latLngRoads));
 
-            Log.d("Show the Direction", "Success!!");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {
