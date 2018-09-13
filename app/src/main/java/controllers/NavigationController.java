@@ -23,6 +23,7 @@ import models.CompassDirection;
 public class NavigationController implements INavigationComponent {
 
     private GoogleMap mMap;
+    private StringBuilder googleURL;
 
     public NavigationController(GoogleMap mMap) {
 
@@ -39,13 +40,21 @@ public class NavigationController implements INavigationComponent {
      */
     public String getDirectionsUrl(Location userLocation, Location destinationLocation) {
 
+        StringBuilder url =
+                new StringBuilder("https://maps.googleapis.com/maps/api/directions/json?");
+        url.append("origin=" + userLocation.getLatitude() + "," + userLocation.getLongitude());
+        url.append("&destination=" + destinationLocation.getLatitude() + ","
+                + destinationLocation.getLongitude());
+        url.append("&key=AIzaSyCkGt3adHi7ynDGF84HLS-ZNSCY8odXhpQ");
 
+//        Log.d("Google URL", googleURL.toString());
 
-        StringBuilder url = new StringBuilder("http://open.mapquestapi.com/directions/v2/" +
-                "route?key=swzvFTlzalR1nkyUfc5AVrnZV7ExjCLv&from=");
-        url.append(userLocation.getLatitude() + "," + userLocation.getLongitude());
-        url.append("&to=" + destinationLocation.getLatitude() + "," +
-                destinationLocation.getLongitude());
+//
+//         StringBuilder url = new StringBuilder("http://open.mapquestapi.com/directions/v2/" +
+//                "route?key=swzvFTlzalR1nkyUfc5AVrnZV7ExjCLv&from=");
+//        url.append(userLocation.getLatitude() + "," + userLocation.getLongitude());
+//        url.append("&to=" + destinationLocation.getLatitude() + "," +
+//                destinationLocation.getLongitude());
 
         Log.d("Route URL", url.toString());
 
@@ -85,11 +94,14 @@ public class NavigationController implements INavigationComponent {
             DataParser dataParser = new DataParser();
             List<LatLng> latLngRoutes = dataParser.parseDirections(routes.toString());
 
+            Log.d("LatLngRoutes", latLngRoutes.toString());
+
             direction = mMap.addPolyline(new PolylineOptions()
                     .color(Color.parseColor("#1684FD"))
                     .width(10)
                     .addAll(latLngRoutes));
 
+            Log.d("Show the Direction", "Success!!");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (JSONException e) {

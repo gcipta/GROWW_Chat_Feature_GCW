@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DataParser {
 
@@ -27,10 +28,16 @@ public class DataParser {
         try {
             jsonObject = new JSONObject(jsonData);
 
-            jsonArray = jsonObject.getJSONObject("route")
+            jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0)
                     .getJSONArray("legs")
                     .getJSONObject(0)
-                    .getJSONArray("maneuvers");
+                    .getJSONArray("steps");
+
+
+//            jsonArray = jsonObject.getJSONObject("route")
+//                    .getJSONArray("legs")
+//                    .getJSONObject(0)
+//                    .getJSONArray("maneuvers");
 
             Log.d("JSON Array Route:", jsonArray.toString());
         } catch (JSONException e) {
@@ -54,16 +61,31 @@ public class DataParser {
             try {
 
                 // Get the Latitude and Longitude of the paths and store them in a list.
-                JSONObject point = maneuverJson.getJSONObject(i).getJSONObject("startPoint");
 
+                // Need to include the start point.
+                if (i == 0) {
+                    JSONObject point = maneuverJson.getJSONObject(i).getJSONObject("start_location");
+                    latLngRoutes.add(new LatLng(point.getDouble("lat"),
+                            point.getDouble("lng")));
+                }
+
+                JSONObject point = maneuverJson.getJSONObject(i).getJSONObject("end_location");
                 latLngRoutes.add(new LatLng(point.getDouble("lat"),
                         point.getDouble("lng")));
+
+//                JSONObject point = maneuverJson.getJSONObject(i).getJSONObject("startPoint");
+//
+//                latLngRoutes.add(new LatLng(point.getDouble("lat"),
+//                        point.getDouble("lng")));
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-        Log.d("LatLngRoutes ArrayList", latLngRoutes.toString());
+//        Log.d("LatLngRoutes ArrayList", latLngRoutes.toString());
+
+
         return latLngRoutes;
 
 
