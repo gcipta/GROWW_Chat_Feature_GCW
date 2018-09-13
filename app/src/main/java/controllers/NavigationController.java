@@ -2,12 +2,14 @@ package controllers;
 
 import android.graphics.Color;
 import android.location.Location;
+import android.util.Log;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,15 +38,16 @@ public class NavigationController implements INavigationComponent {
      * @return url to get the JSON API.
      */
     public String getDirectionsUrl(Location userLocation, Location destinationLocation) {
-        StringBuilder url = new StringBuilder("https://route.api.here.com/routing/7.2/" +
-                "calculateroute.json?app_id=vasjqUzfKhzOc7gUXhlq&app_code=QFDsWEGLzcT29CPk3HT5Gg");
 
-        url.append("&waypoint0=geo!" + userLocation.getLatitude() + "," +
-                userLocation.getLongitude());
-        url.append("&waypoint1=geo!" + destinationLocation.getLatitude() + "," +
+
+
+        StringBuilder url = new StringBuilder("http://open.mapquestapi.com/directions/v2/" +
+                "route?key=swzvFTlzalR1nkyUfc5AVrnZV7ExjCLv&from=");
+        url.append(userLocation.getLatitude() + "," + userLocation.getLongitude());
+        url.append("&to=" + destinationLocation.getLatitude() + "," +
                 destinationLocation.getLongitude());
-        url.append("&departure=now&mode=fastest;");
-        url.append("pedestrian;traffic:disabled");
+
+        Log.d("Route URL", url.toString());
 
         return url.toString();
     }

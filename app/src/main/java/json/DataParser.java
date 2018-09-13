@@ -26,12 +26,11 @@ public class DataParser {
 
         try {
             jsonObject = new JSONObject(jsonData);
-            jsonArray = jsonObject.getJSONObject("response")
-                    .getJSONArray("route")
+
+            jsonArray = jsonObject.getJSONObject("route")
+                    .getJSONArray("legs")
                     .getJSONObject(0)
-                    .getJSONArray("leg")
-                    .getJSONObject(0)
-                    .getJSONArray("maneuver");
+                    .getJSONArray("maneuvers");
 
             Log.d("JSON Array Route:", jsonArray.toString());
         } catch (JSONException e) {
@@ -53,10 +52,13 @@ public class DataParser {
 
         for (int i = 0; i < maneuverJson.length(); i++) {
             try {
-                JSONObject point = maneuverJson.getJSONObject(i).getJSONObject("position");
 
-                latLngRoutes.add(new LatLng(point.getDouble("latitude"),
-                        point.getDouble("longitude")));
+                // Get the Latitude and Longitude of the paths and store them in a list.
+                JSONObject point = maneuverJson.getJSONObject(i).getJSONObject("startPoint");
+
+                latLngRoutes.add(new LatLng(point.getDouble("lat"),
+                        point.getDouble("lng")));
+
             } catch (JSONException e) {
                 e.printStackTrace();
             }
