@@ -86,7 +86,7 @@ public class NavigationController implements INavigationComponent {
             List<LatLng> latLngRoutes = dataParser.parseDirections(routes.toString());
 
             direction = mMap.addPolyline(new PolylineOptions()
-                    .color(Color.BLUE)
+                    .color(Color.parseColor("#1684FD"))
                     .width(10)
                     .addAll(latLngRoutes));
 

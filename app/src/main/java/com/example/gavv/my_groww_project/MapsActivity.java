@@ -1,7 +1,9 @@
 package com.example.gavv.my_groww_project;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -10,6 +12,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -90,7 +94,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             LatLng userLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
 
             // Set a marker on the user's location.
-            mMap.addMarker(new MarkerOptions().position(userLatLng).title(title));
+            mMap.addCircle(new CircleOptions().center(userLatLng)
+                    .fillColor(Color.parseColor("#1684FD"))
+                    .strokeColor(Color.WHITE)
+                    .radius(30));
+
 
             // If the user has set a destination, show it on the map.
             if (destinationLocation != null) {
@@ -99,9 +107,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
                 Log.d("Destination Address: ", userLocationController.getDestinationDetails());
                 mMap.addMarker(new MarkerOptions().position(destinationLatLng)
-                        .title(userLocationController.getDestinationDetails())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory
-                                .HUE_BLUE)))
+                        .title(userLocationController.getDestinationDetails()))
                         .setDraggable(true);
 
                 double midLat = (userLatLng.latitude + destinationLatLng.latitude)/2;
@@ -223,10 +229,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.zoomOut());
             }
         });
-
-
     }
-
 
     /**
      * Manipulates the map once available.
@@ -380,7 +383,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         newDestination.setLongitude(marker.getPosition().longitude);
         userLocationController.setDestinationLocation(newDestination);
 
-        Log.d("Destination Location", "Changed!!!");
+        Log.d("Destination Location", "To" + marker.getPosition().latitude + ", "
+        + marker.getPosition().longitude);
 
         marker.setTitle(userLocationController.getDestinationDetails());
     }
