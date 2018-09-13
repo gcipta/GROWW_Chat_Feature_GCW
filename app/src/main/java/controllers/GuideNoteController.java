@@ -1,7 +1,8 @@
 package controllers;
 
+import android.location.Location;
+
 import models.GuideNote;
-import models.Location;
 
 public class GuideNoteController implements IGuideNoteComponent {
     @Override

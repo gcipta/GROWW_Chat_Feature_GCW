@@ -1,5 +1,7 @@
 package models;
 
+import android.location.Location;
+
 public class LocationGuideNote extends GuideNote {
 
     private Location location;
