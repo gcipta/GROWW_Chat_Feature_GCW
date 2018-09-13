@@ -62,6 +62,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private NavigationController navigationController;
 
     private Polyline direction;
+    private boolean isGuiding = false;
 
 
     /**
@@ -93,31 +94,29 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             LatLng userLatLng = new LatLng(userLocation.getLatitude(), userLocation.getLongitude());
 
+            // Mark user's location on the map.
             // Set a marker on the user's location.
-            mMap.addCircle(new CircleOptions().center(userLatLng)
-                    .fillColor(Color.parseColor("#1684FD"))
-                    .strokeColor(Color.WHITE)
-                    .radius(30));
-
+            mMap.addMarker(new MarkerOptions().position(userLatLng).title(title));
 
             // If the user has set a destination, show it on the map.
             if (destinationLocation != null) {
+
                 LatLng destinationLatLng = new LatLng(destinationLocation.getLatitude(),
                         destinationLocation.getLongitude());
 
                 Log.d("Destination Address: ", userLocationController.getDestinationDetails());
                 mMap.addMarker(new MarkerOptions().position(destinationLatLng)
-                        .title(userLocationController.getDestinationDetails()))
+                        .title(userLocationController.getDestinationDetails())
+                        .icon(BitmapDescriptorFactory.defaultMarker(
+                                BitmapDescriptorFactory.HUE_BLUE)))
                         .setDraggable(true);
 
-                double midLat = (userLatLng.latitude + destinationLatLng.latitude)/2;
-                double midLng = (userLatLng.longitude + destinationLatLng.longitude)/2;
-
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(midLat, midLng),
-                        15));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
+                        mMap.getCameraPosition().zoom));
             } else  {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
-            }
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
+                       15));
+        }
         }
     }
 
@@ -199,6 +198,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
 
+                isGuiding = true;
+
                 // Ensure the destination is not null.
                 if (userLocationController.getDestinationLocation() != null) {
 
@@ -219,14 +220,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onClick(View v) {
                 mMap.moveCamera(CameraUpdateFactory.zoomIn());
+                int camera_zoom_value = Log.d("Camera Zoom In",
+                        ((Float) (mMap.getCameraPosition().zoom + 1)).toString());
+
             }
         });
 
         zoomOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 mMap.moveCamera(CameraUpdateFactory.zoomOut());
+                int camera_zoom_value = Log.d("Camera Zoom Out",
+                        ((Float) (mMap.getCameraPosition().zoom - 1)).toString() );
             }
         });
     }
@@ -257,11 +262,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         locationListener = new LocationListener() {
             @Override
-            public void onLocationChanged(android.location.Location location) {
+            public void onLocationChanged(Location location) {
 
                 Log.d("Location", "Changed!");
                 userLocationController.setUserLocation(location);
                 centerMapOnLocation("Your Location");
+
+                // If the app is guiding the user, then it will update the direction.
+                if (isGuiding) {
+                    direction.remove();
+                    direction = navigationController.displayDirection(
+                            userLocationController.getUserLocation(),
+                            userLocationController.getDestinationLocation());
+                }
 
             }
 
@@ -362,6 +375,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMarkerDragStart(Marker marker) {
 
+        Log.d("Marker Drag Start", "Remove Polyline");
         // Remove the previous path from the map.
         if (direction != null) {
             direction.remove();
@@ -387,5 +401,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         + marker.getPosition().longitude);
 
         marker.setTitle(userLocationController.getDestinationDetails());
+
+        // If it is still guiding, then it will give a new direction.
+        if (isGuiding) {
+            direction = navigationController.displayDirection(
+                    userLocationController.getUserLocation(),
+                    userLocationController.getDestinationLocation());
+        }
+
     }
 }
