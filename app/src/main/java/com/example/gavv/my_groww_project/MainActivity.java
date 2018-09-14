@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToMap() {
 
-        Intent intent = new Intent(this, HelperActivity.class);
+        Intent intent = new Intent(this, HelperMapsActivity.class);
 
         startActivity(intent);
     }

@@ -63,7 +63,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".HelperActivity"
+            android:name=".HelperMapsActivity"
             android:label="@string/title_activity_maps" />
         <activity
             android:name=".SignUpHelper"

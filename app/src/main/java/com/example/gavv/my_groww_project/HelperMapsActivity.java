@@ -39,7 +39,7 @@ import java.util.Locale;
 import controllers.LocationController;
 import controllers.NavigationController;
 
-public class HelperActivity extends FragmentActivity implements OnMapReadyCallback,
+public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerDragListener{
 
     private GoogleMap mMap;
@@ -166,7 +166,7 @@ public class HelperActivity extends FragmentActivity implements OnMapReadyCallba
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(HelperActivity.this,
+                Toast.makeText(HelperMapsActivity.this,
                         userLocationController.getUserLocationDetails(), Toast.LENGTH_LONG).show();
             }
         });
@@ -183,7 +183,7 @@ public class HelperActivity extends FragmentActivity implements OnMapReadyCallba
                     address = "You have not chosen any destination yet!";
                 }
 
-                Toast.makeText(HelperActivity.this, address, Toast.LENGTH_LONG).show();
+                Toast.makeText(HelperMapsActivity.this, address, Toast.LENGTH_LONG).show();
             }
         });
 
