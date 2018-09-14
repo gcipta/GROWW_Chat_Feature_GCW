@@ -2,6 +2,7 @@ package com.example.gavv.my_groww_project;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,6 +19,7 @@ import android.Manifest;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -59,6 +61,8 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private Polyline direction;
     private boolean isGuiding = false;
+
+    private EditText inputSearch;
 
 
     /**
@@ -109,10 +113,10 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
                         mMap.getCameraPosition().zoom));
-            } else  {
+            } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
-                       15));
-        }
+                        15));
+            }
         }
     }
 
@@ -226,6 +230,12 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 mMap.moveCamera(CameraUpdateFactory.zoomOut());
             }
         });
+
+
+        // Search Bar
+        inputSearch = (EditText) findViewById(R.id.input_search);
+        inputSearch.setHint("Enter Address, City or ZIP Code");
+        inputSearch.setHintTextColor(Color.LTGRAY);
     }
 
     /**
