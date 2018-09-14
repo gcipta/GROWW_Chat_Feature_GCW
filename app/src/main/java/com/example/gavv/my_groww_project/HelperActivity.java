@@ -1,9 +1,7 @@
 package com.example.gavv.my_groww_project;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -12,7 +10,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
@@ -28,7 +25,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -43,7 +39,7 @@ import java.util.Locale;
 import controllers.LocationController;
 import controllers.NavigationController;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback,
+public class HelperActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerDragListener{
 
     private GoogleMap mMap;
@@ -170,7 +166,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(MapsActivity.this,
+                Toast.makeText(HelperActivity.this,
                         userLocationController.getUserLocationDetails(), Toast.LENGTH_LONG).show();
             }
         });
@@ -187,7 +183,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     address = "You have not chosen any destination yet!";
                 }
 
-                Toast.makeText(MapsActivity.this, address, Toast.LENGTH_LONG).show();
+                Toast.makeText(HelperActivity.this, address, Toast.LENGTH_LONG).show();
             }
         });
 
