@@ -125,36 +125,4 @@ public class DataParser {
 
         return latLngRoads;
     }
-
-    /**
-     * Get the roads to the destination and return it as a list of LatLng.
-     * @param roads
-     * @return
-     */
-    public List<LatLng> getRoads(JSONArray roads, LatLng sourceLatLng,
-                                 LatLng destinationLatLng) {
-
-        List<LatLng> latLngRoads = new ArrayList<LatLng>();
-
-        // Add the start point.
-        latLngRoads.add(sourceLatLng);
-
-        // Loop through the JSON file to get the Latitude and Longitude of the roads.
-        for (int i = 0; i < roads.length(); i++) {
-
-            try {
-                JSONObject jsonLocation = roads.getJSONObject(i).getJSONObject("location");
-                latLngRoads.add(new LatLng(jsonLocation.getDouble("latitude"),
-                        jsonLocation.getDouble("longitude")));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        // Add the destination point.
-        latLngRoads.add(destinationLatLng);
-
-        return latLngRoads;
-    }
 }

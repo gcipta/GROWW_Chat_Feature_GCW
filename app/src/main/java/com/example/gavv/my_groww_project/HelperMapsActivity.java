@@ -17,9 +17,12 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.Manifest;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -144,27 +147,15 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+    // BUTTON FUNCTIONALITY
 
-        // Need this to be able to download JSON from URL.
-        if (android.os.Build.VERSION.SDK_INT > 9) {
-            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-            StrictMode.setThreadPolicy(policy);
-        }
+    /**
+     * Set a button to show user's location details.
+     */
+    private void initUserLocationDetailsButton() {
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-
-        // Show user's and destination location details.
+        // Show user's location details.
         showUserLocationDetailsButton = (Button) findViewById(R.id.showUserDetailsButton);
-        showDestinationLocationDetailsButton = (Button) findViewById(R.id
-                .showDestinationDetailsButton);
 
         showUserLocationDetailsButton.setOnClickListener(new View.OnClickListener() {
 
@@ -174,6 +165,17 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         userLocationController.getUserLocationDetails(), Toast.LENGTH_LONG).show();
             }
         });
+
+    }
+
+    /**
+     * Set a button to show destination details.
+     */
+    private void initDestinationLocationDetailsButton() {
+
+        // Show destination location details.
+        showDestinationLocationDetailsButton = (Button) findViewById(R.id
+                .showDestinationDetailsButton);
 
         showDestinationLocationDetailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,6 +192,12 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 Toast.makeText(HelperMapsActivity.this, address, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Set a button to show a direction from user's location to the chosen destination.
+     */
+    private void initDirectionButton() {
 
         // Show the direction to the destination.
         directionButton = (Button) findViewById(R.id.directionButton);
@@ -210,6 +218,12 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 }
             }
         });
+    }
+
+    /**
+     * Set a button to do zoom in and out on the map.
+     */
+    private void initZoomButton() {
 
         // Zoom In and Zoom Out Button
         zoomInButton = (Button) findViewById(R.id.zoomInButton);
@@ -230,12 +244,69 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 mMap.moveCamera(CameraUpdateFactory.zoomOut());
             }
         });
+    }
 
+    /**
+     * Search bar functionality
+     */
+    private void initSearchBar() {
 
-        // Search Bar
         inputSearch = (EditText) findViewById(R.id.input_search);
+
+        // Set a hint on the search bar.
         inputSearch.setHint("Enter Address, City or ZIP Code");
         inputSearch.setHintTextColor(Color.LTGRAY);
+
+        inputSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if (actionId == EditorInfo.IME_ACTION_SEARCH
+                        || actionId == EditorInfo.IME_ACTION_DONE
+                        || event.getAction() == KeyEvent.ACTION_DOWN
+                        || event.getAction() == KeyEvent.KEYCODE_ENTER) {
+
+                    // Execute the method for searching
+                    startGeoLocate();
+                }
+                return false;
+            }
+        });
+    }
+
+    private void startGeoLocate() {
+
+        String searchString = inputSearch.getText().toString();
+
+
+    }
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+
+        // Need this to be able to download JSON from URL.
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy =
+                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+
+        // Set on-click-listener function on the button.
+        initUserLocationDetailsButton();
+        initDestinationLocationDetailsButton();
+        initDirectionButton();
+        initZoomButton();
+
+        initSearchBar();
     }
 
     /**
@@ -370,14 +441,11 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         userLocationController.setDestinationLocation(newDestination);
 
         centerMapOnLocation("Your Location");
-
-        Log.d("Map Long: ", "Clicked");
     }
 
     @Override
     public void onMarkerDragStart(Marker marker) {
 
-        Log.d("Marker Drag Start", "Remove Polyline");
         // Remove the previous path from the map.
         if (direction != null) {
             direction.remove();

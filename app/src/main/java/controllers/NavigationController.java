@@ -103,12 +103,17 @@ public class NavigationController implements INavigationComponent {
             // Get the routes.
             List<LatLng> latLngRoutes = (ArrayList<LatLng>) objectParsed[0];
 
+            Log.d("Lat Lng Routes", latLngRoutes.toString());
+
             // Get the roads that the routes pass through.
             String latLngString = (String) objectParsed[1];
 
             // Download the roads as a JSON.
             JSONArray roads = downloadJsonApi.readJsonFromUrl(getRoadsUrl(latLngString))
                     .getJSONArray("snappedPoints");
+
+            Log.d("Roads URL", getRoadsUrl(latLngString));
+            Log.d("JSONArray Roads", roads.toString());
 
             // Get the roads as a list of LatLng.
             List<LatLng> latLngRoads = dataParser.getRoads(roads, userLocation,
@@ -117,7 +122,7 @@ public class NavigationController implements INavigationComponent {
             direction = mMap.addPolyline(new PolylineOptions()
                     .color(Color.parseColor("#1684FD"))
                     .width(10)
-                    .addAll(latLngRoads));
+                    .addAll(latLngRoutes));
 
         } catch (IOException e) {
             e.printStackTrace();
