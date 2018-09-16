@@ -561,6 +561,11 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         newDestination.setLongitude(marker.getPosition().longitude);
         userLocationController.setDestinationLocation(newDestination);
 
+        // Clean the input text.
+        if (inputSearch.getText() != null) {
+            inputSearch.setText("");
+        }
+
         Log.d("Destination Location", "To" + marker.getPosition().latitude + ", "
         + marker.getPosition().longitude);
 
