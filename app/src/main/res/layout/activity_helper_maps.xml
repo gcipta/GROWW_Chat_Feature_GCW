@@ -24,7 +24,7 @@
 
     <RelativeLayout
         android:layout_width="350dp"
-        android:layout_height="30dp"
+        android:layout_height="40dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="18dp"
@@ -40,7 +40,7 @@
             android:layout_marginStart="15dp"
             android:src="@drawable/ic_magnify" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/input_search"
             android:layout_width="288dp"
             android:layout_height="match_parent"

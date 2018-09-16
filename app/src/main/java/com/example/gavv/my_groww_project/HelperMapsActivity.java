@@ -20,32 +20,47 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.AutocompletePrediction;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import adapter.PlaceAutocompleteAdapter;
 import controllers.LocationController;
 import controllers.NavigationController;
 
 public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCallback,
-        GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerDragListener{
+        GoogleMap.OnMapLongClickListener,
+        GoogleMap.OnMarkerDragListener,
+        GoogleApiClient.OnConnectionFailedListener{
 
     private GoogleMap mMap;
 
@@ -65,7 +80,11 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     private Polyline direction;
     private boolean isGuiding = false;
 
-    private EditText inputSearch;
+    private AutoCompleteTextView inputSearch;
+    private PlaceAutocompleteAdapter mPlaceAutoCompleteAdapter;
+    private GoogleApiClient mGoogleApiClient;
+
+    private LatLngBounds latLngBounds;
 
 
     /**
@@ -147,6 +166,20 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+    private void startDirection() {
+
+        isGuiding = true;
+
+        // Ensure the destination is not null.
+        if (userLocationController.getDestinationLocation() != null) {
+
+            // Find the destination
+            direction = navigationController.displayDirection(
+                    userLocationController.getUserLocation(),
+                    userLocationController.getDestinationLocation());
+        }
+    }
+
     // BUTTON FUNCTIONALITY
 
     /**
@@ -206,16 +239,14 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void onClick(View v) {
 
-                isGuiding = true;
-
-                // Ensure the destination is not null.
                 if (userLocationController.getDestinationLocation() != null) {
-
-                    // Find the destination
-                    direction = navigationController.displayDirection(
-                            userLocationController.getUserLocation(),
-                            userLocationController.getDestinationLocation());
+                    startDirection();
+                } else {
+                    Toast.makeText(HelperMapsActivity.this,
+                            "You have not chosen any destination yet!",
+                            Toast.LENGTH_LONG).show();
                 }
+
             }
         });
     }
@@ -251,41 +282,103 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
      */
     private void initSearchBar() {
 
-        inputSearch = (EditText) findViewById(R.id.input_search);
+        // Initialize a Google Api Client.
+        mGoogleApiClient = new GoogleApiClient
+                .Builder(this)
+                .addApi(Places.GEO_DATA_API)
+                .addApi(Places.PLACE_DETECTION_API)
+                .enableAutoManage(this, this)
+                .build();
+
+        LatLng userLatLng = new LatLng(userLocationController.getUserLocation().getLatitude(),
+                userLocationController.getUserLocation().getLongitude());
+
+        LatLng boundLatLng = new LatLng(
+                userLocationController.getUserLocation().getLatitude() + 5,
+                userLocationController.getUserLocation().getLongitude() + 5);
+
+        latLngBounds = new LatLngBounds(userLatLng, boundLatLng);
+
+         // Initialise the Autocomplete Adapter
+        mPlaceAutoCompleteAdapter = new PlaceAutocompleteAdapter(this,
+                Places.getGeoDataClient(this),
+                latLngBounds, null);
+
+        inputSearch.setAdapter(mPlaceAutoCompleteAdapter);
 
         // Set a hint on the search bar.
         inputSearch.setHint("Enter Address, City or ZIP Code");
         inputSearch.setHintTextColor(Color.LTGRAY);
 
-        inputSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        // When the user click enters, it will direct to the destination.
+        inputSearch.setFocusableInTouchMode(true);
+        inputSearch.requestFocus();
 
-                if (actionId == EditorInfo.IME_ACTION_SEARCH
-                        || actionId == EditorInfo.IME_ACTION_DONE
-                        || event.getAction() == KeyEvent.ACTION_DOWN
-                        || event.getAction() == KeyEvent.KEYCODE_ENTER) {
+        inputSearch.setOnItemClickListener(mAutocompleteClickListener);
 
-                    // Execute the method for searching
-                    startGeoLocate();
-                }
-                return false;
+    }
+
+    /**
+     * Showing the location details when the user clicks on the list.
+     */
+    private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
+
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final AutocompletePrediction item = mPlaceAutoCompleteAdapter.getItem(position);
+            final String placeId = item.getPlaceId();
+
+            PendingResult<PlaceBuffer> placeResults =
+                    Places.GeoDataApi.getPlaceById(mGoogleApiClient, placeId);
+
+            placeResults.setResultCallback(mUpdatePlaceDetailsCallback);
+
+        }
+    };
+
+    /**
+     * A callback function to get information about the location.
+     */
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(@NonNull PlaceBuffer places) {
+
+            if (!places.getStatus().isSuccess()) {
+                Log.d("Place Query", "Place query did not complete.");
+
+                // Need to release the buffer to avoid memory leak.
+                places.release();
+                return;
             }
-        });
-    }
 
-    private void startGeoLocate() {
+            final Place place = places.get(0);
 
-        String searchString = inputSearch.getText().toString();
+            Log.d("Place details:",  "LatLng: " + place.getLatLng());
+            Log.d("Place details: ", "Address" + place.getAddress());
+
+            // Update the destination and show it.
+            Location newDestination = new Location("");
+            newDestination.setLatitude(place.getLatLng().latitude);
+            newDestination.setLongitude(place.getLatLng().longitude);
+
+            userLocationController.setDestinationLocation(newDestination);
+
+            centerMapOnLocation("Your Location");
+
+            // Start to show the direction.
+            startDirection();
+
+            places.release();
 
 
-    }
-
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+        setContentView(R.layout.activity_helper_maps);
+
+        inputSearch = (AutoCompleteTextView) findViewById(R.id.input_search);
 
         // Need this to be able to download JSON from URL.
         if (android.os.Build.VERSION.SDK_INT > 9) {
@@ -306,7 +399,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         initDirectionButton();
         initZoomButton();
 
-        initSearchBar();
     }
 
     /**
@@ -398,6 +490,8 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 }
             }
         }
+
+        initSearchBar();
     }
 
     @Override
@@ -480,4 +574,12 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
 
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+
+
 }
