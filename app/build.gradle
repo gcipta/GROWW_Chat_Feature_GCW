@@ -47,6 +47,9 @@ dependencies {
     implementation 'com.google.android.gms:play-services-places:15.0.1'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
 
+    // Needed to use PolyUtil
+    implementation 'com.google.maps.android:android-maps-utils:0.5+'
+
 
 }
 

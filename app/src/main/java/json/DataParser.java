@@ -4,6 +4,7 @@ import android.location.Location;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.PolyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,12 +16,16 @@ import java.util.Objects;
 
 public class DataParser {
 
+    // An integer that is used to choose options whether routes or polylines that will be returned.
+    public static final int ROUTES = 0;
+    public static final int POLYLINES = 1;
+
     /**
      * Retrieve the directions from a JSON file and parse it.
      * @param jsonData
      * @return
      */
-    public Object[] parseDirections(String jsonData) {
+    public List<LatLng> parseDirections(String jsonData, Integer options) {
 
         JSONArray jsonArray = null;
         JSONObject jsonObject;
@@ -38,7 +43,15 @@ public class DataParser {
             e.printStackTrace();
         }
 
-        return getPaths(jsonArray);
+        if (options == ROUTES) {
+
+            return getRoutes(jsonArray);
+        } else if (options == POLYLINES) {
+
+            return getPolylines(jsonArray);
+        }
+
+        return null;
     }
 
     /**
@@ -46,15 +59,11 @@ public class DataParser {
      * @param maneuverJson
      * @return a list of LatLng from the source to the destination.
      */
-    private Object[] getPaths(JSONArray maneuverJson) {
+    private List<LatLng> getRoutes(JSONArray maneuverJson) {
 
         int count = maneuverJson.length();
-        Object objectParse[] = new Object[2];
 
         List<LatLng> latLngRoutes= new ArrayList<LatLng>();
-
-        // It is used later when make a REST call to get the road details.
-        StringBuilder latLngString = new StringBuilder("");
 
         for (int i = 0; i < maneuverJson.length(); i++) {
             try {
@@ -68,10 +77,6 @@ public class DataParser {
 
                     latLngRoutes.add(new LatLng(point.getDouble("lat"),
                             point.getDouble("lng")));
-
-                    latLngString.append(point.getDouble("lat") + ","
-                            + point.getDouble("lng"));
-
                 }
 
                 // Add the Longitude and Latitude into the list.
@@ -79,50 +84,43 @@ public class DataParser {
                 latLngRoutes.add(new LatLng(point.getDouble("lat"),
                         point.getDouble("lng")));
 
-                latLngString.append("|" + point.getDouble("lat") + ","
-                        + point.getDouble("lng"));
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        objectParse[0] = latLngRoutes;
-        objectParse[1] = latLngString.toString();
-
-        return objectParse;
+        return latLngRoutes;
     }
 
+
     /**
-     * Get the roads to the destination and return it as a list of LatLng.
-     * @param roads
+     * Get the string polylines from the JSON.
+     * @param steps
      * @return
      */
-    public List<LatLng> getRoads(JSONArray roads, Location userLocation,
-                                 Location destinationLocation) {
+    public List<LatLng> getPolylines(JSONArray steps) {
 
-        List<LatLng> latLngRoads = new ArrayList<LatLng>();
+        List<LatLng> mPolylines = new ArrayList<LatLng>();
 
-        // Add the start point.
-        latLngRoads.add(new LatLng(userLocation.getLatitude(), userLocation.getLongitude()));
+        for (int i = 0; i < steps.length(); i++) {
 
-        // Loop through the JSON file to get the Latitude and Longitude of the roads.
-        for (int i = 0; i < roads.length(); i++) {
+            JSONObject polyline;
 
             try {
-                JSONObject jsonLocation = roads.getJSONObject(i).getJSONObject("location");
-                latLngRoads.add(new LatLng(jsonLocation.getDouble("latitude"),
-                        jsonLocation.getDouble("longitude")));
+                polyline = steps.getJSONObject(i)
+                        .getJSONObject("polyline");
+
+                mPolylines.addAll(PolyUtil.decode(polyline.getString("points")));
+
 
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        // Add the destination point.
-        latLngRoads.add(new LatLng(destinationLocation.getLatitude(),
-                destinationLocation.getLongitude()));
+        Log.d("JSONObject Polylines", mPolylines.toString());
 
-        return latLngRoads;
+        return mPolylines;
     }
 }

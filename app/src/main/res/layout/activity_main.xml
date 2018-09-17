@@ -13,7 +13,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp"
-        android:text="Maps Button" />
+        android:text="Helper's Activity" />
 
     <Button
         android:id="@+id/signUpButton"

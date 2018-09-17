@@ -8,6 +8,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.maps.android.PolyUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -53,18 +54,6 @@ public class NavigationController implements INavigationComponent {
         return url.toString();
     }
 
-    public String getRoadsUrl(String latLngString) {
-
-        StringBuilder url =
-                new StringBuilder("https://roads.googleapis.com/v1/snapToRoads?path=");
-        url.append(latLngString);
-        url.append("&interpolate=true&key=AIzaSyCkGt3adHi7ynDGF84HLS-ZNSCY8odXhpQ");
-
-        return url.toString();
-    }
-
-
-
     @Override
     public CompassDirection setCompass(Location helpee, Location target) {
         return null;
@@ -98,31 +87,21 @@ public class NavigationController implements INavigationComponent {
             // Parse the routes
             DataParser dataParser = new DataParser();
 
-            Object objectParsed[] = dataParser.parseDirections(routes.toString());
+            // Get the polylines and show it on the map
+            List<LatLng> mPolylines= dataParser.parseDirections(routes.toString(),
+                    DataParser.POLYLINES);
 
-            // Get the routes.
-            List<LatLng> latLngRoutes = (ArrayList<LatLng>) objectParsed[0];
+            Log.d("mPolylines", mPolylines.toString());
 
-            Log.d("Lat Lng Routes", latLngRoutes.toString());
+            PolylineOptions routeCoordinates = new PolylineOptions();
 
-            // Get the roads that the routes pass through.
-            String latLngString = (String) objectParsed[1];
+            for(LatLng latLng : mPolylines) {
+                routeCoordinates.add(new LatLng(latLng.latitude, latLng.longitude));
+            }
 
-            // Download the roads as a JSON.
-            JSONArray roads = downloadJsonApi.readJsonFromUrl(getRoadsUrl(latLngString))
-                    .getJSONArray("snappedPoints");
+            routeCoordinates.width(10).color(Color.parseColor("#1684FD"));
+            direction = mMap.addPolyline(routeCoordinates);
 
-            Log.d("Roads URL", getRoadsUrl(latLngString));
-            Log.d("JSONArray Roads", roads.toString());
-
-            // Get the roads as a list of LatLng.
-            List<LatLng> latLngRoads = dataParser.getRoads(roads, userLocation,
-                    destinationLocation);
-
-            direction = mMap.addPolyline(new PolylineOptions()
-                    .color(Color.parseColor("#1684FD"))
-                    .width(10)
-                    .addAll(latLngRoutes));
 
         } catch (IOException e) {
             e.printStackTrace();
