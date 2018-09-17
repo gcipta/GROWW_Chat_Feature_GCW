@@ -17,4 +17,9 @@
     <string name="title_activity_sign_up_helpee">SignUpHelpee</string>
     <string name="title_activity_maps">Map</string>
     <string name="title_activity_sign_up_helper">SignUpHelper</string>
+
+    <!-- Strings related to voice chat -->
+    <string name="turn_speaker_on">Speaker ON</string>
+    <string name="callee">client identity</string>
+    <string name="callHint">Dial a client name. Leaving the field empty results in an automated response.</string>
 </resources>

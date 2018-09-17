@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button button;
     Button signUpButton;
+    Button voiceCallButton;
 
     public void goToMap() {
 
@@ -25,6 +26,13 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void gotToVoiceCall(){
+
+        Intent intent = new Intent(this, VoiceActivity.class);
+
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.button);
 
         signUpButton = (Button) findViewById(R.id.signUpButton);
+
+        voiceCallButton = (Button) findViewById(R.id.voiceActivityButton);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,6 +56,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 goToSignUp();
+            }
+        });
+
+        voiceCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotToVoiceCall();
             }
         });
 
