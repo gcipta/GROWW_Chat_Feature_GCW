@@ -8,7 +8,8 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button button;
+    Button helperActButton;
+    Button helpeeActButton;
     Button signUpButton;
 
     public void goToMap() {
@@ -25,21 +26,38 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goToHelpeeAct() {
+
+        Intent intent = new Intent(this, HelpeeMapsActivity.class);
+
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.button);
+        helperActButton = (Button) findViewById(R.id.helperActButton);
+
+        helpeeActButton = (Button) findViewById(R.id.helpeeActButton);
 
         signUpButton = (Button) findViewById(R.id.signUpButton);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        helperActButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToMap();
             }
         });
+
+        helpeeActButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToHelpeeAct();
+            }
+        });
+
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
 

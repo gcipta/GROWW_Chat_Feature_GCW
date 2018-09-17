@@ -48,7 +48,6 @@ import com.google.android.gms.maps.model.Polyline;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -584,7 +583,5 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
-
-
 
 }
