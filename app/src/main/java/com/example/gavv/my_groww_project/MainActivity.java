@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
 
     Button button;
     Button signUpButton;
+    Button signInButton;
 
     public void goToMap() {
 
@@ -25,6 +26,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void goToSignIn(){
+        Intent intent = new Intent(this, SignInActivity.class);
+
+        startActivity(intent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,6 +40,15 @@ public class MainActivity extends AppCompatActivity {
         button = (Button) findViewById(R.id.button);
 
         signUpButton = (Button) findViewById(R.id.signUpButton);
+
+        signInButton = findViewById(R.id.signInButton);
+
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToSignIn();
+            }
+        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
