@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "736913906410",
+    "firebase_url": "https://growwchat.firebaseio.com",
+    "project_id": "growwchat",
+    "storage_bucket": "growwchat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736913906410:android:de9adc8720709a31",
+        "android_client_info": {
+          "package_name": "com.example.gavv.growwchat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736913906410-1nhp4f9e8hh5rqi80pio09214f58ptlq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.gavv.growwchat",
+            "certificate_hash": "5f4ec923fdaedff095c53fc34f5fefe49c3b7a62"
+          }
+        },
+        {
+          "client_id": "736913906410-od6hbfgvd3jvnihnon3128g0iilo8mam.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBxYsUeyqMFaFTJh_qWjh7TXk0BEcX-edY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736913906410-od6hbfgvd3jvnihnon3128g0iilo8mam.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
