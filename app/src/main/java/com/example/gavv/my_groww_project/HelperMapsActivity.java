@@ -176,6 +176,16 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
             direction = navigationController.displayDirection(
                     userLocationController.getUserLocation(),
                     userLocationController.getDestinationLocation());
+
+            // If it is impossible to get to the destination, display an error message.
+            if (direction == null) {
+
+                Toast.makeText(HelperMapsActivity.this,
+                        "The destination is not achieveable. " +
+                        "Try different transportation mode or pick another destination point.",
+                        Toast.LENGTH_LONG).show();
+            }
+
         }
     }
 
@@ -491,6 +501,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         initSearchBar();
+
     }
 
     @Override
@@ -572,9 +583,9 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         // If it is still guiding, then it will give a new direction.
         if (isGuiding) {
-            direction = navigationController.displayDirection(
-                    userLocationController.getUserLocation(),
-                    userLocationController.getDestinationLocation());
+
+            startDirection();
+
         }
 
     }
