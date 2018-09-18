@@ -61,13 +61,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void centerMapOnLocation(String title) {
 
         Location location = userLocationController.getLocation();
-        LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        mMap.clear();
+        if (location != null) {
+            LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-        mMap.addMarker(new MarkerOptions().position(userLatLng).title(title));
+            mMap.clear();
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
+            mMap.addMarker(new MarkerOptions().position(userLatLng).title(title));
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 15));
+        }
 
     }
 
@@ -189,14 +192,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 this.userLocationController.setLocation(locationManager.
                         getLastKnownLocation(LocationManager.GPS_PROVIDER));
 
-                centerMapOnLocation(
-                        "Your Location");
                 if (this.userLocationController.getLocation() != null) {
                     centerMapOnLocation("Your Location");
                 }
             }
         }
-
-
     }
 }
