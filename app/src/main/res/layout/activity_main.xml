@@ -7,13 +7,22 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/helperActButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="200dp"
-        android:text="Maps Button" />
+        android:text="Helper's Activity" />
+
+    <Button
+        android:id="@+id/helpeeActButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="232dp"
+        android:text="Helpee's Activity" />
 
     <Button
         android:id="@+id/signUpButton"
@@ -21,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="223dp"
+        android:layout_marginBottom="143dp"
         android:text="Sign Up" />
 
     <Button
@@ -30,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="141dp"
+        android:layout_marginBottom="66dp"
         android:text="Sign In" />
 
     <TextView
