@@ -69,6 +69,7 @@ public class SignUpHelpee extends Activity {
                     Log.d(TAG, "createUserWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
                     user.sendEmailVerification();
+                    Toast.makeText(SignUpHelpee.this, "User" + user.getEmail() + "created" , Toast.LENGTH_LONG).show();
                 } else{
                     Log.w(TAG, "createUserWithEmail:failure",task.getException());
                     Toast.makeText(SignUpHelpee.this,"Authentication failed", Toast.LENGTH_LONG).show();

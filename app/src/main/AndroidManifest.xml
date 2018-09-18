@@ -67,6 +67,7 @@
             android:name=".SignUpHelper"
             android:label="@string/title_activity_sign_up_helper" />
         <activity android:name=".HelpeeMapsActivity"></activity>
+        <activity android:name=".SignInActivity"></activity>
     </application>
 
 </manifest>

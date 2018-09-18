@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
     Button helperActButton;
     Button helpeeActButton;
     Button signUpButton;
+    Button signInButton;
 
     public void goToMap() {
 
@@ -29,6 +30,11 @@ public class MainActivity extends AppCompatActivity {
     public void goToHelpeeAct() {
 
         Intent intent = new Intent(this, HelpeeMapsActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToSignIn(){
+        Intent intent = new Intent(this, SignInActivity.class);
 
         startActivity(intent);
     }
@@ -44,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
         signUpButton = (Button) findViewById(R.id.signUpButton);
 
+        signInButton = findViewById(R.id.signInButton);
+
         helperActButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,6 +63,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 goToHelpeeAct();
+            }
+        });
+
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToSignIn();
             }
         });
 
