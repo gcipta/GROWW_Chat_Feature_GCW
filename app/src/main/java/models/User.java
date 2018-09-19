@@ -8,12 +8,13 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private Long id;
+    private String id;
 
-    public User(String firstName, String lastName, String email){
+    public User(String firstName, String lastName, String email, String id){
         setFirstName(firstName);
         setLastName(lastName);
         setEmail(email);
+        setId(id);
     }
 
     public void setFirstName(String firstName) {
@@ -39,4 +40,6 @@ public class User {
     public String getEmail() {
         return email;
     }
+
+    public void setId(String id){ this.id = id;}
 }

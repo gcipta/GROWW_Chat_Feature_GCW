@@ -68,7 +68,8 @@
             android:label="@string/title_activity_sign_up_helper" />
         <activity android:name=".HelpeeMapsActivity" />
         <activity android:name=".SignInActivity" />
-        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".ProfileActivity" />
+        <activity android:name=".EditProfileActivity"></activity>
     </application>
 
 </manifest>

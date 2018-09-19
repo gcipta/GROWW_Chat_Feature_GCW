@@ -2,69 +2,63 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/relativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ProfileActivity">
 
     <TextView
-        android:id="@+id/textView8"
+        android:id="@+id/profile_displayName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="323dp"
-        android:layout_height="111dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="47dp"
-        app:srcCompat="@drawable/brown" />
+        android:layout_marginTop="158dp"
+        android:text="DisplayName"
+        android:textSize="35sp" />
 
     <TextView
-        android:id="@+id/displayName"
+        android:id="@+id/profile_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="177dp"
-        android:text="DisplayName"
-        android:textSize="36sp" />
+        android:layout_marginTop="244dp"
+        android:text="Status" />
 
-    <Button
-        android:id="@+id/contactList"
+    <TextView
+        android:id="@+id/profile_totalFriends"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="108dp"
-        android:text="Contact List" />
+        android:layout_marginBottom="207dp"
+        android:text="Total Friends" />
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/profile_displayName"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="-158dp"
+        android:background="@drawable/brown"
+        app:srcCompat="@drawable/brown" />
 
     <Button
-        android:id="@+id/findSession"
+        android:id="@+id/profile_send_req_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="250dp"
-        android:text="Find Session" />
+        android:layout_marginBottom="106dp"
+        android:text="SEND FRIEND REQUEST" />
 
     <Button
-        android:id="@+id/chatButton"
+        android:id="@+id/profile_decline_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="49dp"
-        android:layout_marginTop="293dp"
-        android:text="Chat" />
-
-    <Button
-        android:id="@+id/editProfile_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/chatButton"
-        android:layout_toEndOf="@+id/contactList"
-        android:text="Edit Profile" />
-
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="43dp"
+        android:text="DECLINE REQUEST" />
 </RelativeLayout>

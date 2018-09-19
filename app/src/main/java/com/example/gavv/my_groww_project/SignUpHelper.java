@@ -51,9 +51,13 @@ public class SignUpHelper extends Activity {
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
 
-                Helper helper = new Helper(fname,lname,email);
+
 
                 createAccount(email,password);
+
+                String id  = mAuth.getCurrentUser().getUid();
+                Helper helper = new Helper(fname,lname,email,id);
+
                 mDatabase.child("helper").push().setValue(helper);
             }
         });

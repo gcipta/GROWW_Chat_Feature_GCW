@@ -51,9 +51,12 @@ public class SignUpHelpee extends Activity {
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
 
-                Helpee helpee = new Helpee(fName, lName, email);
+
 
                 createAccount(email, password);
+                String id  = mAuth.getCurrentUser().getUid();
+
+                Helpee helpee = new Helpee(fName, lName, email, id);
 
                 if(mAuth.getCurrentUser() != null){
                     mDatabase.child("helpee").push().setValue(helpee);
