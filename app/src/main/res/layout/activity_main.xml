@@ -10,36 +10,33 @@
         android:id="@+id/helperActButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_above="@+id/helpeeActButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="200dp"
         android:text="Helper's Activity" />
 
     <Button
         android:id="@+id/helpeeActButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/signUpButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="232dp"
         android:text="Helpee's Activity" />
 
     <Button
         android:id="@+id/signUpButton"
-        android:layout_width="wrap_content"
+        android:layout_width="149dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
+        android:layout_above="@+id/signInButton"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="143dp"
         android:text="Sign Up" />
 
     <Button
         android:id="@+id/signInButton"
-        android:layout_width="wrap_content"
+        android:layout_width="149dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="66dp"
+        android:layout_marginBottom="192dp"
         android:text="Sign In" />
 
     <TextView

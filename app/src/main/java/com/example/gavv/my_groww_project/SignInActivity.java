@@ -51,7 +51,8 @@ public class SignInActivity extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(SignInActivity.this,user.getEmail() + " has signed in", Toast.LENGTH_LONG).show();
+//                            Toast.makeText(SignInActivity.this,user.getEmail() + " has signed in", Toast.LENGTH_LONG).show();
+                            goToProfile();
                         } else {
                             // If sign in fails, display a message to the user.
                             Toast.makeText(SignInActivity.this, "Try again.",
@@ -61,8 +62,8 @@ public class SignInActivity extends AppCompatActivity {
                 });
     }
 
-    private void goToPage(){
-        Intent intent = new Intent(this, MainActivity.class);
+    private void goToProfile(){
+        Intent intent = new Intent(this, ProfileActivity.class);
         startActivity(intent);
     }
 }

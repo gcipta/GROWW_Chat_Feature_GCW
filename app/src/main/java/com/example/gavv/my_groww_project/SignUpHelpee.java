@@ -1,5 +1,6 @@
 package com.example.gavv.my_groww_project;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.annotation.NonNull;
@@ -53,7 +54,12 @@ public class SignUpHelpee extends Activity {
                 Helpee helpee = new Helpee(fName, lName, email);
 
                 createAccount(email, password);
-                mDatabase.child("helpee").push().setValue(helpee);
+
+                if(mAuth.getCurrentUser() != null){
+                    mDatabase.child("helpee").push().setValue(helpee);
+                }
+                
+
             }
         });
 
@@ -70,12 +76,18 @@ public class SignUpHelpee extends Activity {
                     FirebaseUser user = mAuth.getCurrentUser();
                     user.sendEmailVerification();
                     Toast.makeText(SignUpHelpee.this, "User" + user.getEmail() + "created" , Toast.LENGTH_LONG).show();
+                    goToProfile();
                 } else{
                     Log.w(TAG, "createUserWithEmail:failure",task.getException());
                     Toast.makeText(SignUpHelpee.this,"Authentication failed", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    private void goToProfile() {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
     }
 
 }

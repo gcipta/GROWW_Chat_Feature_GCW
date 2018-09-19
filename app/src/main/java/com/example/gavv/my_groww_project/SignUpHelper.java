@@ -1,6 +1,7 @@
 package com.example.gavv.my_groww_project;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -68,12 +69,18 @@ public class SignUpHelper extends Activity {
                     Log.d(TAG, "createUserWithEmail:success");
                     FirebaseUser user = mAuth.getCurrentUser();
                     user.sendEmailVerification();
+                    goToProfile();
                 } else{
                     Log.w(TAG, "createUserWithEmail:failure",task.getException());
                     Toast.makeText(SignUpHelper.this,"Authentication failed", Toast.LENGTH_LONG).show();
                 }
             }
         });
+    }
+
+    private void goToProfile() {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        startActivity(intent);
     }
 
 }
