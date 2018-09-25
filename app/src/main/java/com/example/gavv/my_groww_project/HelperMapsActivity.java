@@ -45,8 +45,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -77,6 +81,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private LocationController userLocationController;
     private NavigationController navigationController;
+    private Location helpeeLocation;
 
     private Polyline direction;
     private boolean isGuiding = false;
@@ -87,7 +92,15 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private LatLngBounds latLngBounds;
 
-    private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+    private static final DatabaseReference ROOT_REF =
+            FirebaseDatabase.getInstance().getReference();
+    private static final DatabaseReference HELPEE_REF = ROOT_REF.child("Users").child("Helpees");
+    private static final DatabaseReference HELPER_REF = ROOT_REF.child("Users").child("Helpers");
+    private static final String HELPER_UID = FirebaseAuth.getInstance().getUid();
+
+    private String helpeeUid = "";
+    private DatabaseReference mHelpeeDest;
+    private LatLng helpeeLatLng = null;
 
 
     /**
@@ -332,6 +345,85 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     /**
+     * A function to check if there is a request from the helpee.
+     */
+    public void checkRequest() {
+
+        DatabaseReference mHelpeeId = HELPER_REF
+                .child(HELPER_UID).child("requestHelpeeID");
+
+        mHelpeeId.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    helpeeUid = dataSnapshot.getValue(String.class);
+
+                    // Initialise the database reference to store the destination for the helpee.
+                    mHelpeeDest = HELPEE_REF.child(helpeeUid);
+
+                    getHelpeeLocation();
+
+                    Log.d("Request from Helpee", helpeeUid);
+                } else {
+                    Log.d("Request from Helpee", "NO REQUEST");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * A function to retrieve the helpee's location from the database.
+     */
+    public void getHelpeeLocation() {
+
+        DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid).child("l");
+
+        helpeeLocRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                // Get the latitude and longitude of the helpee.
+                if (dataSnapshot.exists() && dataSnapshot.child("0").exists()
+                        && dataSnapshot.child("1").exists()) {
+                    helpeeLatLng = new LatLng(
+                            (Double) dataSnapshot.child("0").getValue(Double.class),
+                            (Double) dataSnapshot.child("1").getValue(Double.class));
+
+                    showHelpeeLocation();
+                    Log.d("Helpee Lat Lng", helpeeLatLng.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * A function to show helpee's location on the map.
+     */
+    public void showHelpeeLocation() {
+
+        mMap.addMarker(new MarkerOptions().position(helpeeLatLng)
+                .title("Your Helpee's Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_ORANGE)))
+                .setDraggable(false);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
+                15));
+
+    }
+
+    /**
      * Showing the location details when the user clicks on the list.
      */
     private AdapterView.OnItemClickListener mAutocompleteClickListener = new AdapterView.OnItemClickListener() {
@@ -411,6 +503,14 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         initDestinationLocationDetailsButton();
         initDirectionButton();
         initZoomButton();
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkRequest();
 
     }
 

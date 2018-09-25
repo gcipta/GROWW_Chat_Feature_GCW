@@ -127,7 +127,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
             public void onClick(View v) {
 
                 DatabaseReference ref =
-                        FirebaseDatabase.getInstance().getReference("requests");
+                        FirebaseDatabase.getInstance().getReference("Requests");
                 GeoFire geoFire = new GeoFire(ref);
 
                 if (!isMakingRequest) {
