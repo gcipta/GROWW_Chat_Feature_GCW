@@ -161,7 +161,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         mMap.getCameraPosition().zoom));
             }  else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
-                        mMap.getCameraPosition().zoom));
+                        15));
             }
         }
     }
