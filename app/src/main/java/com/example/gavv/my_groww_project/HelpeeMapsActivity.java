@@ -75,8 +75,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
      */
     private void findHelper() {
 
-        GeoFire geoFire = new GeoFire(ROOT_REF.child("HelpersAvailable"));
-
         Query query = ROOT_REF.child("HelpersAvailable").orderByChild("email")
                 .equalTo("williamliandri@yahoo.com");
 
@@ -92,6 +90,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                     Map<String, String> data = (Map)dataSnapshot.getValue();
 
+                    // Remove the Helpers from the Helpers Available list
+                    DatabaseReference helpersAvaiRef = ROOT_REF.child("HelpersAvailable")
+                            .child(helperUid);
+                    helpersAvaiRef.removeValue();
 
                     // Update the helper's data to indicate there is a request.
                     DatabaseReference helperRef = HELPER_REF.child(helperUid);
@@ -117,6 +119,18 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     }
 
     /**
+     * A function to update helpee's location on the database.
+     */
+    private void updateLocationOnDatabase(DatabaseReference ref) {
+
+        GeoFire geoFire = new GeoFire(ref);
+
+        geoFire.setLocation(HELPEE_UID, new GeoLocation(
+                userLocationController.getUserLocation().getLatitude(),
+                userLocationController.getUserLocation().getLongitude()));
+    }
+
+    /**
      * A function to initiate the button functionality to make request.
      */
     private void initRequestButton() {
@@ -128,13 +142,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                 DatabaseReference ref =
                         FirebaseDatabase.getInstance().getReference("Requests");
-                GeoFire geoFire = new GeoFire(ref);
 
                 if (!isMakingRequest) {
 
-                    geoFire.setLocation(HELPEE_UID, new GeoLocation(
-                            userLocationController.getUserLocation().getLatitude(),
-                            userLocationController.getUserLocation().getLongitude()));
+                    updateLocationOnDatabase(ref);
 
                     // Update the making request flag to true and store it in the database.
                     isMakingRequest = true;
@@ -170,6 +181,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     helperRef.removeValue();
 
                     // Delete the request from the server
+                    GeoFire geoFire = new GeoFire(ref);
                     geoFire.removeLocation(HELPEE_UID);
 
                     requestButton.setText("Request");
@@ -233,6 +245,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                 Log.d("Location", "Changed!");
                 userLocationController.setUserLocation(location);
+
 
             }
 

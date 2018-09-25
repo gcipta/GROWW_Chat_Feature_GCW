@@ -81,7 +81,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private LocationController userLocationController;
     private NavigationController navigationController;
-    private Location helpeeLocation;
 
     private Polyline direction;
     private boolean isGuiding = false;
@@ -100,7 +99,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private String helpeeUid = "";
     private DatabaseReference mHelpeeDest;
-    private LatLng helpeeLatLng = null;
+    private Location helpeeLocation = null;
 
 
     /**
@@ -149,11 +148,17 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                                 BitmapDescriptorFactory.HUE_BLUE)))
                         .setDraggable(true);
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
-                        mMap.getCameraPosition().zoom));
             } else {
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
-                        15));
+                if (helpeeLocation == null) {
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
+                            mMap.getCameraPosition().zoom));
+                } else {
+                    showHelpeeLocation();
+                    LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
+                            helpeeLocation.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
+                            mMap.getCameraPosition().zoom));
+                }
             }
         }
     }
@@ -347,7 +352,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * A function to check if there is a request from the helpee.
      */
-    public void checkRequest() {
+    private void checkRequest() {
 
         DatabaseReference mHelpeeId = HELPER_REF
                 .child(HELPER_UID).child("requestHelpeeID");
@@ -380,7 +385,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * A function to retrieve the helpee's location from the database.
      */
-    public void getHelpeeLocation() {
+    private void getHelpeeLocation() {
 
         DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid).child("l");
 
@@ -391,9 +396,15 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 // Get the latitude and longitude of the helpee.
                 if (dataSnapshot.exists() && dataSnapshot.child("0").exists()
                         && dataSnapshot.child("1").exists()) {
-                    helpeeLatLng = new LatLng(
-                            (Double) dataSnapshot.child("0").getValue(Double.class),
-                            (Double) dataSnapshot.child("1").getValue(Double.class));
+
+                    helpeeLocation = new Location("");
+                    helpeeLocation.setLatitude((Double)
+                            dataSnapshot.child("0").getValue(Double.class));
+                    helpeeLocation.setLongitude((Double)
+                            dataSnapshot.child("1").getValue(Double.class));
+
+                    LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
+                            helpeeLocation.getLongitude());
 
                     showHelpeeLocation();
                     Log.d("Helpee Lat Lng", helpeeLatLng.toString());
@@ -410,7 +421,10 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * A function to show helpee's location on the map.
      */
-    public void showHelpeeLocation() {
+    private void showHelpeeLocation() {
+
+        LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
+                helpeeLocation.getLongitude());
 
         mMap.addMarker(new MarkerOptions().position(helpeeLatLng)
                 .title("Your Helpee's Location")
