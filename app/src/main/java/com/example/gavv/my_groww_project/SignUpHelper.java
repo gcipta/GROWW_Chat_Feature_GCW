@@ -53,7 +53,7 @@ public class SignUpHelper extends Activity {
                 Helper helper = new Helper(fname,lname,email);
 
                 createAccount(email,password);
-                mDatabase.child("Users").push().setValue(helper);
+                mDatabase.child("Users").child("Helpers").push().setValue(helper);
             }
         });
     }
