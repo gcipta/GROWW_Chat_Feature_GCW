@@ -224,6 +224,34 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
+        DatabaseReference mHelpeeDest = HELPEE_REF.child(HELPEE_UID).child("destination");
+
+        mHelpeeDest.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()) {
+
+                    Location destinationLocation = new Location("");
+                    destinationLocation.setLatitude(dataSnapshot.child("l").child("0")
+                            .getValue(Double.class));
+                    destinationLocation.setLongitude(dataSnapshot.child("l").child("1")
+                            .getValue(Double.class));
+
+                    TextView destinationTextView = (TextView) findViewById(R.id.destination);
+                    String location = "Lat: " + destinationLocation.getLatitude() + "\n"
+                            + " Lng: " + destinationLocation.getLongitude();
+                            destinationTextView.setText(location);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+
+            }
+        });
     }
 
     @Override
