@@ -27,6 +27,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -148,17 +150,18 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                                 BitmapDescriptorFactory.HUE_BLUE)))
                         .setDraggable(true);
 
-            } else {
-                if (helpeeLocation == null) {
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
-                            mMap.getCameraPosition().zoom));
-                } else {
-                    showHelpeeLocation();
-                    LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
-                            helpeeLocation.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
-                            mMap.getCameraPosition().zoom));
-                }
+            }
+
+            // Show helpee's location
+            if (helpeeLocation != null) {
+                showHelpeeLocation();
+                LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
+                        helpeeLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
+                        mMap.getCameraPosition().zoom));
+            }  else {
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
+                        mMap.getCameraPosition().zoom));
             }
         }
     }
@@ -196,7 +199,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             // Find the destination
             direction = navigationController.displayDirection(
-                    userLocationController.getUserLocation(),
+                    helpeeLocation,
                     userLocationController.getDestinationLocation());
 
             // If it is impossible to get to the destination, display an error message.
@@ -272,6 +275,15 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                 if (userLocationController.getDestinationLocation() != null) {
                     startDirection();
+
+                    // Send the destination to the Helpee.
+                    DatabaseReference helpeeDestRef = HELPEE_REF.child(helpeeUid);
+                    GeoFire geoFire = new GeoFire(helpeeDestRef);
+
+                    geoFire.setLocation("destination", new GeoLocation(
+                            userLocationController.getDestinationLocation().getLatitude(),
+                            userLocationController.getDestinationLocation().getLongitude()));
+
                 } else {
                     Toast.makeText(HelperMapsActivity.this,
                             "You have not chosen any destination yet!",

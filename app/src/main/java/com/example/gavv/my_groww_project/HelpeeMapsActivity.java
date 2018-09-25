@@ -180,6 +180,13 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                     helperRef.removeValue();
 
+                    // Add Helpers on the Helpers Available list
+                    DatabaseReference helpersAvaiRef = ROOT_REF.child("HelpersAvailable")
+                            .child(helperUid);
+                    HashMap<String, Object> helperData = new HashMap<>();
+                    helperData.put("email", "williamliandri@yahoo.com");
+                    helpersAvaiRef.updateChildren(helperData);
+
                     // Delete the request from the server
                     GeoFire geoFire = new GeoFire(ref);
                     geoFire.removeLocation(HELPEE_UID);
@@ -211,6 +218,12 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                         locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER));
             }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
     }
 
     @Override
@@ -246,6 +259,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                 Log.d("Location", "Changed!");
                 userLocationController.setUserLocation(location);
 
+                if (isMakingRequest) {
+                    updateLocationOnDatabase(ROOT_REF.child("Requests"));
+                }
 
             }
 
