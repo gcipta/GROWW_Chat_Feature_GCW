@@ -17,6 +17,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+
 import models.Helper;
 
 public class SignUpHelper extends Activity {
@@ -45,15 +47,23 @@ public class SignUpHelper extends Activity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String fname =  mFname.getText().toString();
-                String lname = mLname.getText().toString();
+                String fName =  mFname.getText().toString();
+                String lName = mLname.getText().toString();
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
 
-                Helper helper = new Helper(fname,lname,email);
+                Helper helper = new Helper(fName,lName,email);
+
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("firstName", fName);
+                data.put("lastName", lName);
+                data.put("email", email);
+                data.put("role", helper.getRole());
 
                 createAccount(email,password);
-                mDatabase.child("Users").child("Helpers").push().setValue(helper);
+                mDatabase.child("Users").child("Helpers")
+                        .child(FirebaseAuth.getInstance().getUid()).updateChildren(data);
+
             }
         });
     }

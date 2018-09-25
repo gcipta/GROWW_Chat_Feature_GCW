@@ -18,6 +18,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+
 import models.Helpee;
 
 public class SignUpHelpee extends Activity {
@@ -53,8 +55,15 @@ public class SignUpHelpee extends Activity {
 
                 Helpee helpee = new Helpee(fName, lName, email);
 
+                HashMap<String, Object> data = new HashMap<>();
+                data.put("firstName", fName);
+                data.put("lastName", lName);
+                data.put("email", email);
+                data.put("role", helpee.getRole());
+
                 createAccount(email, password);
-                mDatabase.child("Users").child("Helpees").push().setValue(helpee);
+                mDatabase.child("Users").child("Helpees")
+                        .child(FirebaseAuth.getInstance().getUid()).updateChildren(data);
             }
         });
 

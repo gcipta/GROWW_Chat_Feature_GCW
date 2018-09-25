@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="143dp"
+        android:layout_marginBottom="109dp"
         android:text="Sign Up" />
 
     <Button
@@ -39,7 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="66dp"
+        android:layout_marginBottom="33dp"
         android:text="Sign In" />
 
     <TextView
@@ -51,5 +51,14 @@
         android:layout_marginTop="90dp"
         android:text="GROWW"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3" />
+
+    <Button
+        android:id="@+id/signOutButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="172dp"
+        android:text="Sign Out" />
 
 </RelativeLayout>

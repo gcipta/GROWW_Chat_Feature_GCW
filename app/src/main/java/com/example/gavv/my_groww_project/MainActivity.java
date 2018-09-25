@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity {
 
     Button helperActButton;
     Button helpeeActButton;
     Button signUpButton;
     Button signInButton;
+    Button signOutButton;
 
     public void goToMap() {
 
@@ -52,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
 
         signInButton = findViewById(R.id.signInButton);
 
+        signOutButton = (Button) findViewById(R.id.signOutButton);
+
         helperActButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,12 +78,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
         signUpButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 goToSignUp();
+            }
+        });
+
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseAuth.getInstance().signOut();
             }
         });
 
