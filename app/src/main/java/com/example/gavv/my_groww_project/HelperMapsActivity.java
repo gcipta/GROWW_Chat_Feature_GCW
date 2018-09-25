@@ -195,11 +195,28 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         isGuiding = true;
 
         // Ensure the destination is not null.
-        if (userLocationController.getDestinationLocation() != null) {
+        if (helpeeLocation != null) {
 
             // Find the destination
             direction = navigationController.displayDirection(
                     helpeeLocation,
+                    userLocationController.getDestinationLocation());
+
+            // If it is impossible to get to the destination, display an error message.
+            if (direction == null) {
+
+                Toast.makeText(HelperMapsActivity.this,
+                        "The destination is not achieveable. " +
+                                "Try different transportation mode or " +
+                                "pick another destination point.",
+                        Toast.LENGTH_LONG).show();
+            }
+        }
+        else if (userLocationController.getDestinationLocation() != null && helpeeLocation == null) {
+
+            // Find the destination
+            direction = navigationController.displayDirection(
+                    userLocationController.getUserLocation(),
                     userLocationController.getDestinationLocation());
 
             // If it is impossible to get to the destination, display an error message.
