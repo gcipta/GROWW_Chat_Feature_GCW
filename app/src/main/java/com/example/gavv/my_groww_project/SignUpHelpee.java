@@ -2,6 +2,7 @@ package com.example.gavv.my_groww_project;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
@@ -53,7 +54,7 @@ public class SignUpHelpee extends Activity {
                 Helpee helpee = new Helpee(fName, lName, email);
 
                 createAccount(email, password);
-                mDatabase.child("helpee").push().setValue(helpee);
+                mDatabase.child("Users").child("Helpees").push().setValue(helpee);
             }
         });
 

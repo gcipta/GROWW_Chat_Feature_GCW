@@ -45,6 +45,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -84,6 +86,8 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     private GoogleApiClient mGoogleApiClient;
 
     private LatLngBounds latLngBounds;
+
+    private DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
 
 
     /**
