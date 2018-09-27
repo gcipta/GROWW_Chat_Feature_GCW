@@ -399,6 +399,9 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                     Log.d("Request from Helpee", helpeeUid);
                 } else {
+
+                    helpeeLocation = null;
+                    centerMapOnLocation("Your Location");
                     Log.d("Request from Helpee", "NO REQUEST");
                 }
             }
