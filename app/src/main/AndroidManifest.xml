@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gavv.growwchat">
+    package="com.example.gavv.my_groww_project">
 
     <!-- For getting the image library -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

@@ -1,4 +1,4 @@
-package com.example.gavv.growwchat;
+package com.example.gavv.my_groww_project;
 
 
 import android.content.Context;
@@ -43,7 +43,7 @@ public class RequestFragment extends Fragment {
 
     private String mCurrent_user_id;
 
-    private View mMainView;
+    private View mRequestView;
 
 
 
@@ -58,9 +58,9 @@ public class RequestFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mMainView = inflater.inflate(R.layout.fragment_request, container, false);
+        mRequestView = inflater.inflate(R.layout.fragment_request, container, false);
 
-        mRequestList = (RecyclerView) mMainView.findViewById(R.id.request_list);
+        mRequestList = (RecyclerView) mRequestView.findViewById(R.id.request_list);
         mAuth = FirebaseAuth.getInstance();
 
         mCurrent_user_id = mAuth.getCurrentUser().getUid();
@@ -75,7 +75,7 @@ public class RequestFragment extends Fragment {
         mRequestList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inflate the layout for this fragment
-        return mMainView;
+        return mRequestView;
     }
 
 
@@ -106,32 +106,33 @@ public class RequestFragment extends Fragment {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                final String userName = dataSnapshot.child("name").getValue().toString();
-                                String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
+                                if (dataSnapshot.exists()) {
+                                    final String userName = dataSnapshot.child("name").getValue().toString();
+                                    String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
 
-                                if(dataSnapshot.hasChild("online")) {
+                                    if (dataSnapshot.hasChild("online")) {
 
-                                    String userOnline = dataSnapshot.child("online").getValue().toString();
-                                    requestViewHolder.setUserOnline(userOnline);
-
-                                }
-
-                                requestViewHolder.setName(userName);
-                                requestViewHolder.setUserImage(userThumb, getContext());
-
-                                requestViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
-                                        profileIntent.putExtra("user_id", list_user_id);
-                                        startActivity(profileIntent);
-
+                                        String userOnline = dataSnapshot.child("online").getValue().toString();
+                                        requestViewHolder.setUserOnline(userOnline);
 
                                     }
-                                });
+
+                                    requestViewHolder.setName(userName);
+                                    requestViewHolder.setUserImage(userThumb, getContext());
+
+                                    requestViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+
+                                            Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+                                            profileIntent.putExtra("user_id", list_user_id);
+                                            startActivity(profileIntent);
 
 
+                                        }
+                                    });
+
+                                }
                             }
 
                             @Override

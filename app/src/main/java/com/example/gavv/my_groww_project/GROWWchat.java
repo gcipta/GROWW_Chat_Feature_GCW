@@ -1,4 +1,4 @@
-package com.example.gavv.growwchat;
+package com.example.gavv.my_groww_project;
 
 import android.app.Application;
 import android.support.annotation.NonNull;

@@ -1,4 +1,4 @@
-package com.example.gavv.growwchat;
+package com.example.gavv.my_groww_project;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
