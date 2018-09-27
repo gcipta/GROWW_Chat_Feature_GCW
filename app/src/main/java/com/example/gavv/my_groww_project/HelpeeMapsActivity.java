@@ -47,7 +47,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
     private static final DatabaseReference ROOT_REF =
             FirebaseDatabase.getInstance().getReference();
-    private static final DatabaseReference USER_REF = ROOT_REF.child("Users");
+    private static final DatabaseReference USER_REF = ROOT_REF.child("users");
     private static final String HELPEE_UID = FirebaseAuth.getInstance().getUid();
 
     private Button requestButton;
@@ -74,7 +74,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
      */
     private void findHelper() {
 
-        Query query = ROOT_REF.child("HelpersAvailable").orderByChild("email")
+        Query query = USER_REF.orderByChild("email")
                 .equalTo("williamliandri@yahoo.com");
 
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -172,6 +172,11 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     details.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
                     ref.child(HELPEE_UID).updateChildren(details);
 
+                    // Set the isHelping flag on the helper to be true.
+                    DatabaseReference helpersAvaiRef = USER_REF.child(helperUid).child("isHelping");
+                    helpersAvaiRef.setValue(true);
+
+
                     findHelper();
 
                     requestButton.setText("Cancel Request");
@@ -186,7 +191,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     makingRequest.put("makingRequest", isMakingRequest);
                     USER_REF.child(HELPEE_UID).updateChildren(makingRequest);
 
-
                     Log.d("Helper Uid", helperUid);
 
                     // Remove the request on the helper.
@@ -195,18 +199,19 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                     helperRef.removeValue();
 
-                    // Add Helpers on the Helpers Available list
-                    DatabaseReference helpersAvaiRef = ROOT_REF.child("HelpersAvailable")
-                            .child(helperUid);
-                    HashMap<String, Object> helperData = new HashMap<>();
-                    helperData.put("email", "williamliandri@yahoo.com");
-                    helpersAvaiRef.updateChildren(helperData);
+                    // Set the isHelping flag on the helper to be false.
+                    DatabaseReference helpersAvaiRef = USER_REF.child(helperUid).child("isHelping");
+                    helpersAvaiRef.setValue(false);
 
                     // Delete the request from the server
                     GeoFire geoFire = new GeoFire(ref);
                     geoFire.removeLocation(HELPEE_UID);
 
                     requestButton.setText("Request");
+
+                    // Delete the destination from the server.
+                    DatabaseReference destinationRef = USER_REF.child(HELPEE_UID).child("destination");
+                    destinationRef.removeValue();
 
                 }
 
@@ -287,6 +292,12 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     isMakingRequest = dataSnapshot.getValue(boolean.class);
                     Log.d("Getting Information", "Making Request is" + isMakingRequest);
 
+                    helperUid = getIntent().getStringExtra("helper_id");
+
+                    if (isMakingRequest) {
+                        getHelperUidFromRequest();
+                    }
+
                     // Initialize the request button.
                     requestButton = (Button) findViewById(R.id.requestButton);
                     initRequestButton();
@@ -331,9 +342,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
         checkDestination();
 
-        getMakingRequestStatus();
-
         getHelperUidFromRequest();
+
+        getMakingRequestStatus();
 
     }
 

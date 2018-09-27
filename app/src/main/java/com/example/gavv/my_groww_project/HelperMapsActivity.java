@@ -95,7 +95,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private static final DatabaseReference ROOT_REF =
             FirebaseDatabase.getInstance().getReference();
-    private static final DatabaseReference USER_REF = ROOT_REF.child("Users");
+    private static final DatabaseReference USER_REF = ROOT_REF.child("users");
     private static final String HELPER_UID = FirebaseAuth.getInstance().getUid();
 
     private String helpeeUid = "";
@@ -223,7 +223,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                 Toast.makeText(HelperMapsActivity.this,
                         "The destination is not achieveable. " +
-                        "Try different transportation mode or pick another destination point.",
+                                "Try different transportation mode or pick another destination point.",
                         Toast.LENGTH_LONG).show();
             }
 
@@ -358,7 +358,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         latLngBounds = new LatLngBounds(userLatLng, boundLatLng);
 
-         // Initialise the Autocomplete Adapter
+        // Initialise the Autocomplete Adapter
         mPlaceAutoCompleteAdapter = new PlaceAutocompleteAdapter(this,
                 Places.getGeoDataClient(this),
                 latLngBounds, null);
@@ -723,7 +723,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         Log.d("Destination Location", "To" + marker.getPosition().latitude + ", "
-        + marker.getPosition().longitude);
+                + marker.getPosition().longitude);
 
         marker.setTitle(userLocationController.getDestinationDetails());
 

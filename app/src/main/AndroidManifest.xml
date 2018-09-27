@@ -2,29 +2,32 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.gavv.my_groww_project">
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.READ_PROFILE" />
-    <uses-permission android:name="android.permission.READ_CONTACTS" />
+    <!-- For getting the image library -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
+         location permissions for the 'MyLocation' functionality. 
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
+        android:name=".GROWWchat"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
+        android:theme="@style/AppTheme"> <!-- Make an offline capabilities -->
+        <!-- Firebase Messaging Services -->
+        <service android:name=".FirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,29 +35,45 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".SignUpActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".StartActivity" />
         <activity
-            android:name=".SignUpHelpee"
-            android:label="@string/title_activity_sign_up_helpee">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            android:name=".RegisterActivity"
+            android:parentActivityName=".StartActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".SettingsActivity" />
+        <activity
+            android:name=".StatusActivity"
+            android:parentActivityName=".SettingsActivity" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+        <!-- From ArthurHub -->
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
+
+
+        <!-- Users Activity -->
+        <activity
+            android:name=".UsersActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".ProfileActivity">
+            <intent-filter>
+                <action android:name="com.example.gavv.growwchat_TARGET_NOTIFICATION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <!-- Chat Activity -->
+        <activity
+            android:name=".ChatActivity"
+            android:parentActivityName=".MainActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
+             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -62,12 +81,8 @@
 
         <activity
             android:name=".HelperMapsActivity"
-            android:label="@string/title_activity_maps" />
-        <activity
-            android:name=".SignUpHelper"
-            android:label="@string/title_activity_sign_up_helper" />
+            android:label="@string/title_activity_helper_maps" />
         <activity android:name=".HelpeeMapsActivity"></activity>
-        <activity android:name=".SignInActivity"></activity>
     </application>
 
 </manifest>
