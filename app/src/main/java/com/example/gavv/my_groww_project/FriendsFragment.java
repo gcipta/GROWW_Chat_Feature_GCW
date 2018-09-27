@@ -189,6 +189,16 @@ public class FriendsFragment extends Fragment {
 
                                                 }
 
+                                                // Send a help request
+                                                if (i == 2) {
+
+                                                    Intent requestIntent = new Intent(getContext(), HelpeeMapsActivity.class);
+                                                    requestIntent.putExtra("helper_id", list_user_id);
+                                                    startActivity(requestIntent);
+                                                }
+
+                                                // Send help request
+
                                             }
                                         });
 

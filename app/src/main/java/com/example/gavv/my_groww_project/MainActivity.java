@@ -2,21 +2,27 @@ package com.example.gavv.my_groww_project;
 
 import android.content.Intent;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,6 +37,12 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mUserRef;
 
     private TabLayout mTabLayout;
+
+    private Button mNavigationButton;
+
+    private static final String HELPEE = "helpee";
+    private String role;
+    private boolean isMakingRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
             mUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(mAuth.getCurrentUser().getUid());
 
         }
-
 
         //Tabs
         mViewPager = (ViewPager) findViewById(R.id.main_tabPager);
@@ -73,7 +84,11 @@ public class MainActivity extends AppCompatActivity {
 
         else{
             mUserRef.child("online").setValue(true);
+
+            Log.d("MY USER ID", FirebaseAuth.getInstance().getUid());
+            initialiseButtonandParameters();
         }
+
     }
 
     protected void onStop(){
@@ -92,6 +107,82 @@ public class MainActivity extends AppCompatActivity {
         Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
         finish();
+    }
+
+    /**
+     * A helper function to initialise the functionality of the buttons and parameters.
+     */
+    private void initialiseButtonandParameters() {
+
+        // Get the user's role
+        DatabaseReference mRoleRef = mUserRef.child("role");
+        mRoleRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()) {
+                    role = dataSnapshot.getValue(String.class);
+
+                    // In case of the Helpee, check if the helpee has made a request or not.
+
+                    if (role.equals(HELPEE)) {
+
+                        DatabaseReference mMakingReqRef = mUserRef.child("makingRequest");
+
+                        mMakingReqRef.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                if(dataSnapshot.exists()) {
+
+                                    isMakingRequest = dataSnapshot.getValue(boolean.class);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+        // Add navigation button
+        mNavigationButton = (Button) findViewById(R.id.nav_button);
+
+        mNavigationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent intent;
+                boolean isStartActivity = true;
+                intent = new Intent(getApplicationContext(), HelperMapsActivity.class);
+
+                Log.d("YOUR ROLE IS", role);
+
+                if (role.equals(HELPEE) && isMakingRequest) {
+                    intent = new Intent (getApplicationContext(), HelpeeMapsActivity.class);
+                } else if (role.equals(HELPEE) && !isMakingRequest) {
+                    isStartActivity = false;
+                    Toast.makeText(MainActivity.this, "Please make a help request " +
+                            "first before using this feature!", Toast.LENGTH_LONG).show();
+                }
+
+                if (isStartActivity) {
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     @Override

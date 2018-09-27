@@ -115,7 +115,7 @@ public class RegisterActivity extends AppCompatActivity {
                     mDatabase = FirebaseDatabase.getInstance().getReference().child("users").child(uid);
 
                     //HashMap is needed to create complex data
-                    HashMap<String, String> userMap = new HashMap<>();
+                    HashMap<String, Object> userMap = new HashMap<>();
                     userMap.put("device_token",device_token);
                     userMap.put("name", display_name);
                     userMap.put("status", "Hi There, I Love this GROWW App");
@@ -128,12 +128,14 @@ public class RegisterActivity extends AppCompatActivity {
                     // Set role as helper
                     if (switchState){
                         userMap.put("role", "helper");
-                        userMap.put("isHelping", "false");
+                        boolean isHelping = false;
+                        userMap.put("isHelping", isHelping);
                     }
 
                     else{
                         userMap.put("role", "helpee");
-                        userMap.put("makingRequest", "false");
+                        boolean makingRequest = false;
+                        userMap.put("makingRequest", makingRequest);
                     }
 
 
