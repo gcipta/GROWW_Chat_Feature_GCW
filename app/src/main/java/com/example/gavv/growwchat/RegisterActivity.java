@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -73,6 +74,12 @@ public class RegisterActivity extends AppCompatActivity {
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
 
+                // initiate a Switch
+                Switch simpleSwitch = (Switch) findViewById(R.id.helper_switch);
+                // check current state of a Switch (true or false).
+                Boolean switchState = simpleSwitch.isChecked();
+
+
                 // Ensure that the field are all being filled up to register
                 if(!TextUtils.isEmpty(display_name) || !TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)){
                     mRegProgress.setTitle("Registering User");
@@ -82,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
                     mRegProgress.show();
 
                     // Proceed to registration process from the provided information
-                    register_user(display_name, email, password);
+                    register_user(display_name, email, password, switchState);
                 }
 
 
@@ -90,7 +97,7 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
-    private void register_user(final String display_name, String email, String password){
+    private void register_user(final String display_name, final String email, String password, final Boolean switchState){
 
         // Will listen to the registration till completed
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -113,8 +120,22 @@ public class RegisterActivity extends AppCompatActivity {
                     userMap.put("name", display_name);
                     userMap.put("status", "Hi There, I Love this GROWW App");
                     userMap.put("image", "default");
+                    userMap.put("email", email);
+
                     // to prevent user on loading high resolution data
                     userMap.put("thumb_image", "default");
+
+                    // Set role as helper
+                    if (switchState){
+                        userMap.put("role", "helper");
+                        userMap.put("isHelping", "false");
+                    }
+
+                    else{
+                        userMap.put("role", "helpee");
+                        userMap.put("makingRequest", "false");
+                    }
+
 
                     // Setting the value to the database
                     mDatabase.setValue(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
