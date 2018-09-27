@@ -61,7 +61,7 @@ public class SignUpHelper extends Activity {
                 data.put("role", helper.getRole());
 
                 createAccount(email,password);
-                mDatabase.child("Users").child("Helpers")
+                mDatabase.child("Users")
                         .child(FirebaseAuth.getInstance().getUid()).updateChildren(data);
 
             }

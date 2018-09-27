@@ -37,6 +37,9 @@ public class SignInActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String email = mEmail.getText().toString();
                 String password = mPassword.getText().toString();
+
+                // Log out the previous users.
+                FirebaseAuth.getInstance().signOut();
                 loginUser(email,password);
 
             }

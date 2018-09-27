@@ -95,8 +95,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private static final DatabaseReference ROOT_REF =
             FirebaseDatabase.getInstance().getReference();
-    private static final DatabaseReference HELPEE_REF = ROOT_REF.child("Users").child("Helpees");
-    private static final DatabaseReference HELPER_REF = ROOT_REF.child("Users").child("Helpers");
+    private static final DatabaseReference USER_REF = ROOT_REF.child("Users");
     private static final String HELPER_UID = FirebaseAuth.getInstance().getUid();
 
     private String helpeeUid = "";
@@ -294,7 +293,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                     startDirection();
 
                     // Send the destination to the Helpee.
-                    DatabaseReference helpeeDestRef = HELPEE_REF.child(helpeeUid);
+                    DatabaseReference helpeeDestRef = USER_REF.child(helpeeUid);
                     GeoFire geoFire = new GeoFire(helpeeDestRef);
 
                     geoFire.setLocation("destination", new GeoLocation(
@@ -383,7 +382,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
      */
     private void checkRequest() {
 
-        DatabaseReference mHelpeeId = HELPER_REF
+        DatabaseReference mHelpeeId = USER_REF
                 .child(HELPER_UID).child("requestHelpeeID");
 
         mHelpeeId.addValueEventListener(new ValueEventListener() {
@@ -394,7 +393,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                     helpeeUid = dataSnapshot.getValue(String.class);
 
                     // Initialise the database reference to store the destination for the helpee.
-                    mHelpeeDest = HELPEE_REF.child(helpeeUid);
+                    mHelpeeDest = USER_REF.child(helpeeUid);
 
                     getHelpeeLocation();
 

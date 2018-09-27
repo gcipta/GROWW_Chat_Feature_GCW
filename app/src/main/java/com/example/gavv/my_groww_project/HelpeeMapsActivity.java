@@ -47,8 +47,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
     private static final DatabaseReference ROOT_REF =
             FirebaseDatabase.getInstance().getReference();
-    private static final DatabaseReference HELPEE_REF = ROOT_REF.child("Users").child("Helpees");
-    private static final DatabaseReference HELPER_REF = ROOT_REF.child("Users").child("Helpers");
+    private static final DatabaseReference USER_REF = ROOT_REF.child("Users");
     private static final String HELPEE_UID = FirebaseAuth.getInstance().getUid();
 
     private Button requestButton;
@@ -96,7 +95,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     helpersAvaiRef.removeValue();
 
                     // Update the helper's data to indicate there is a request.
-                    DatabaseReference helperRef = HELPER_REF.child(helperUid);
+                    DatabaseReference helperRef = USER_REF.child(helperUid);
 
                     HashMap<String, Object> request = new HashMap<String, Object>();
                     request.put("requestHelpeeID", FirebaseAuth.getInstance().getCurrentUser()
@@ -104,6 +103,11 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                     helperRef.updateChildren(request);
 
+                    // Save the helper UID in the helpee's database.
+                    DatabaseReference reqHelpee = ROOT_REF.child("Requests").child(HELPEE_UID);
+                    HashMap<String, Object> helperUidData = new HashMap<>();
+                    helperUidData.put("helperUid", helperUid);
+                    reqHelpee.updateChildren(helperUidData);
 
                 } else if (dataSnapshot == null) {
                     Log.d("Find Helper", "Data Snapshot is NULL");
@@ -135,6 +139,15 @@ public class HelpeeMapsActivity extends AppCompatActivity {
      */
     private void initRequestButton() {
 
+        if (isMakingRequest) {
+
+            Log.d("InitRequestButton", "MAKING REQUEST IS " + isMakingRequest);
+
+            requestButton.setText("Cancel Request");
+        } else {
+            Log.d("InitRequestButton", "MAKING REQUEST IS " + isMakingRequest);
+        }
+
         this.requestButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -151,7 +164,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     isMakingRequest = true;
                     HashMap<String, Object> makingRequest = new HashMap<>();
                     makingRequest.put("makingRequest", isMakingRequest);
-                    HELPEE_REF.child(HELPEE_UID).updateChildren(makingRequest);
+                    USER_REF.child(HELPEE_UID).updateChildren(makingRequest);
 
 
                     HashMap<String, Object> details = new HashMap<String, Object>();
@@ -171,11 +184,13 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     isMakingRequest = false;
                     HashMap<String, Object> makingRequest = new HashMap<>();
                     makingRequest.put("makingRequest", isMakingRequest);
-                    HELPEE_REF.child(HELPEE_UID).updateChildren(makingRequest);
+                    USER_REF.child(HELPEE_UID).updateChildren(makingRequest);
+
+
+                    Log.d("Helper Uid", helperUid);
 
                     // Remove the request on the helper.
-                    DatabaseReference helperRef = FirebaseDatabase.getInstance().getReference()
-                            .child("Users").child("Helpers").child(helperUid)
+                    DatabaseReference helperRef = USER_REF.child(helperUid)
                             .child("requestHelpeeID");
 
                     helperRef.removeValue();
@@ -224,7 +239,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
 
-        DatabaseReference mHelpeeDest = HELPEE_REF.child(HELPEE_UID).child("destination");
+
+        // Get the destination information from the database.
+        DatabaseReference mHelpeeDest = USER_REF.child(HELPEE_UID).child("destination");
 
         mHelpeeDest.addValueEventListener(new ValueEventListener() {
             @Override
@@ -252,6 +269,49 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
             }
         });
+
+        // Check whether the user has made a request to the helper before.
+        DatabaseReference mMakingReqRef = USER_REF.child(HELPEE_UID).child("makingRequest");
+
+        mMakingReqRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()) {
+                    isMakingRequest = dataSnapshot.getValue(boolean.class);
+                    Log.d("Getting Information", "Making Request is" + isMakingRequest);
+
+                    // Initialize the request button.
+                    requestButton = (Button) findViewById(R.id.requestButton);
+                    initRequestButton();
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        DatabaseReference mHelperUidRef = ROOT_REF.child("Requests").child(HELPEE_UID)
+                .child("helperUid");
+
+        mHelperUidRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    helperUid = dataSnapshot.getValue(String.class);
+                    Log.d("HELPER UID Database", helperUid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -272,10 +332,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
         guideNoteController.createGuideNote("University of Melbourne",
                 "Get off at University of Melbourne Stop");
 
-
-        // Initialize the request button.
-        requestButton = (Button) findViewById(R.id.requestButton);
-        initRequestButton();
 
         // Initialise the location manager and location listener to get the the helpee's location.
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);

@@ -61,9 +61,9 @@ public class SignUpHelpee extends Activity {
                 data.put("email", email);
                 data.put("role", helpee.getRole());
 
+                FirebaseAuth.getInstance().signOut();
                 createAccount(email, password);
-                mDatabase.child("Users").child("Helpees")
-                        .child(FirebaseAuth.getInstance().getUid()).updateChildren(data);
+                mDatabase.child("Users").child(FirebaseAuth.getInstance().getUid()).updateChildren(data);
             }
         });
 
