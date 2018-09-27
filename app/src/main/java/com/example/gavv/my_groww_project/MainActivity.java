@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         if(mAuth.getCurrentUser() != null){
             mUserRef = FirebaseDatabase.getInstance().getReference().child("users").child(mAuth.getCurrentUser().getUid());
+            Log.d("MAIN ACTIVITY USER", mAuth.getCurrentUser().getUid());
 
         }
 

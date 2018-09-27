@@ -96,7 +96,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     private static final DatabaseReference ROOT_REF =
             FirebaseDatabase.getInstance().getReference();
     private static final DatabaseReference USER_REF = ROOT_REF.child("users");
-    private static final String HELPER_UID = FirebaseAuth.getInstance().getUid();
+    private static final String HELPER_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     private String helpeeUid = "";
     private DatabaseReference mHelpeeDest;

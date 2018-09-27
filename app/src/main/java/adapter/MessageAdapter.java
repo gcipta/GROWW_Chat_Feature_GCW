@@ -1,8 +1,5 @@
-package com.example.gavv.my_groww_project;
+package adapter;
 
-import android.content.Context;
-import android.graphics.Color;
-import android.os.Message;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.gavv.my_groww_project.Messages;
+import com.example.gavv.my_groww_project.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;

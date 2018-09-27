@@ -2,6 +2,7 @@ package com.example.gavv.my_groww_project;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
@@ -48,7 +49,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     private static final DatabaseReference ROOT_REF =
             FirebaseDatabase.getInstance().getReference();
     private static final DatabaseReference USER_REF = ROOT_REF.child("users");
-    private static final String HELPEE_UID = FirebaseAuth.getInstance().getUid();
+    private static final String HELPEE_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
     private Button requestButton;
     private String helperUid;
@@ -212,6 +213,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     // Delete the destination from the server.
                     DatabaseReference destinationRef = USER_REF.child(HELPEE_UID).child("destination");
                     destinationRef.removeValue();
+
+                    // Back to the main activity
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(intent);
 
                 }
 
