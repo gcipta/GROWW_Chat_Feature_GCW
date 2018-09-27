@@ -235,10 +235,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-
+    /**
+     * A function to check if the helper has sent a destination location to the helpee.
+     */
+    private void checkDestination() {
 
         // Get the destination information from the database.
         DatabaseReference mHelpeeDest = USER_REF.child(HELPEE_UID).child("destination");
@@ -258,7 +258,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     TextView destinationTextView = (TextView) findViewById(R.id.destination);
                     String location = "Lat: " + destinationLocation.getLatitude() + "\n"
                             + " Lng: " + destinationLocation.getLongitude();
-                            destinationTextView.setText(location);
+                    destinationTextView.setText(location);
 
                 }
             }
@@ -269,6 +269,12 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    /**
+     * A function to check whether the helpee has made a request or not from the database.
+     */
+    private void getMakingRequestStatus() {
 
         // Check whether the user has made a request to the helper before.
         DatabaseReference mMakingReqRef = USER_REF.child(HELPEE_UID).child("makingRequest");
@@ -293,7 +299,12 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
             }
         });
+    }
 
+    /**
+     * Get the helper Uid from the database in case the helpee has made a request before.
+     */
+    private void getHelperUidFromRequest() {
         DatabaseReference mHelperUidRef = ROOT_REF.child("Requests").child(HELPEE_UID)
                 .child("helperUid");
 
@@ -312,6 +323,18 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        checkDestination();
+
+        getMakingRequestStatus();
+
+        getHelperUidFromRequest();
+
     }
 
     @Override
