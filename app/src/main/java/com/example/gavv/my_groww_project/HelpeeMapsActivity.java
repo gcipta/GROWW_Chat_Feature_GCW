@@ -232,66 +232,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * A function to check whether the helpee has made a request or not from the database.
-     */
-    private void getMakingRequestStatus() {
-
-        // Check whether the user has made a request to the helper before.
-        DatabaseReference mMakingReqRef = USER_REF.child(HELPEE_UID).child("makingRequest");
-
-        mMakingReqRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if(dataSnapshot.exists()) {
-                    isMakingRequest = dataSnapshot.getValue(boolean.class);
-                    helperUid = getIntent().getStringExtra("helper_id");
-
-                    if (isMakingRequest) {
-                        getHelperUidFromRequest();
-                    }
-
-                    // Initialize the request button.
-                    requestButton = (Button) findViewById(R.id.requestButton);
-                    initRequestButton();
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    /**
-     * Get the helper Uid from the database in case the helpee has made a request before.
-     */
-    private void getHelperUidFromRequest() {
-        DatabaseReference mHelperUidRef = ROOT_REF.child(HELPEE_UID).child("helperUid");
-
-        mHelperUidRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                if (dataSnapshot.exists()) {
-                    helperUid = dataSnapshot.getValue(String.class);
-
-                    Log.d("MY HELPER UID", helperUid);
-                } else {
-                    Log.d("MY HELPER UID", " IS NULL!!" + HELPEE_UID);
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -300,25 +240,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
         helperUid = getIntent().getStringExtra("helper_id");
 
-        if (helperUid != null) {
-
-            Log.d("MY HELPER UID", helperUid);
-        } else {
-            Log.d("MY HELPER UID", " IS NULL!!" + HELPEE_UID);
-        }
-
-
-//        getHelperUidFromRequest();
-
-
-
         initRequestButton();
-
-
-
-
-//
-//        getMakingRequestStatus();
 
     }
 

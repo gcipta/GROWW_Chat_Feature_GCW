@@ -154,9 +154,6 @@ public class MainActivity extends AppCompatActivity {
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                 if (dataSnapshot.exists()) {
                                     helperUid = dataSnapshot.getValue(String.class);
-                                    Log.d("HELPER UID", dataSnapshot.getValue(String.class));
-                                } else {
-                                    Log.d("HELPER UID", " IS NULL!!");
                                 }
                             }
 
