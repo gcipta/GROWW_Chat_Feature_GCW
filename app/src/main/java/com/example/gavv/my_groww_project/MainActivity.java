@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String HELPEE = "helpee";
     private String role;
     private boolean isMakingRequest;
+    private String helperUid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,6 +147,25 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
+                        // Get the helper UID if exists.
+                        DatabaseReference mHelperUid = mUserRef.child("helperUid");
+                        mHelperUid.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    helperUid = dataSnapshot.getValue(String.class);
+                                    Log.d("HELPER UID", dataSnapshot.getValue(String.class));
+                                } else {
+                                    Log.d("HELPER UID", " IS NULL!!");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+                        });
+
                     }
                 }
             }
@@ -173,6 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (role.equals(HELPEE) && isMakingRequest) {
                     intent = new Intent (getApplicationContext(), HelpeeMapsActivity.class);
+                    intent.putExtra("helper_id", helperUid);
                 } else if (role.equals(HELPEE) && !isMakingRequest) {
                     isStartActivity = false;
                     Toast.makeText(MainActivity.this, "Please make a help request " +

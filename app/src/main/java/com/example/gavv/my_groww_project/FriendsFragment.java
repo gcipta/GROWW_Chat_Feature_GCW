@@ -13,11 +13,13 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
@@ -29,6 +31,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -50,6 +54,8 @@ public class FriendsFragment extends Fragment {
     private View mMainView;
 
     private String mRole;
+
+    private boolean isHelperHelping;
 
 
     public FriendsFragment() {
@@ -192,12 +198,62 @@ public class FriendsFragment extends Fragment {
                                                 // Send a help request
                                                 if (i == 2) {
 
-                                                    Intent requestIntent = new Intent(getContext(), HelpeeMapsActivity.class);
-                                                    requestIntent.putExtra("helper_id", list_user_id);
-                                                    startActivity(requestIntent);
+                                                    // Check if the helper is helping others or not.
+                                                    DatabaseReference mIsHelpingHelperRef =
+                                                            FirebaseDatabase.getInstance()
+                                                            .getReference()
+                                                            .child("users")
+                                                            .child(list_user_id)
+                                                            .child("isHelping");
+
+
+                                                    mIsHelpingHelperRef.addValueEventListener(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                            if(dataSnapshot.exists()) {
+
+                                                                if (!dataSnapshot.getValue(boolean.class)) {
+                                                                    isHelperHelping = dataSnapshot.getValue(boolean.class);
+
+                                                                } else {
+                                                                    Log.d("Helper Status", "Your Helper is busy, please try to request help from another helper!");
+                                                                }
+                                                            }
+                                                        }
+
+                                                        @Override
+                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                        }
+                                                    });
+
+                                                    if (!isHelperHelping) {
+                                                        // Set the making request flag on helpee's position to be true.
+                                                        DatabaseReference mHelpeeRef = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrent_user_id);
+                                                        mHelpeeRef.child("makingRequest").setValue(true);
+
+                                                        // Include the helper UID on the helpee's position.
+                                                        HashMap<String, Object> helperInfo = new HashMap<>();
+                                                        helperInfo.put("helperUid", list_user_id);
+                                                        mHelpeeRef.updateChildren(helperInfo);
+
+                                                        // Set the helping flag on helper's position to be true
+                                                        DatabaseReference mHelperRef = FirebaseDatabase.getInstance().getReference().child("users").child(list_user_id);
+                                                        mHelperRef.child("isHelping").setValue(true);
+
+                                                        // Include the helpee UID on the helper's position.
+                                                        HashMap<String, Object> request = new HashMap<String, Object>();
+                                                        request.put("requestHelpeeID", FirebaseAuth.getInstance().getCurrentUser()
+                                                                .getUid());
+                                                        mHelperRef.updateChildren(request);
+
+                                                        Intent requestIntent = new Intent(getContext(), HelpeeMapsActivity.class);
+                                                        requestIntent.putExtra("helper_id", list_user_id);
+                                                        startActivity(requestIntent);
+                                                    }
                                                 }
 
-                                                // Send help request
 
                                             }
                                         });
@@ -228,8 +284,7 @@ public class FriendsFragment extends Fragment {
 
     }
 
-
-    public static class FriendsViewHolder extends RecyclerView.ViewHolder {
+        public static class FriendsViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
 

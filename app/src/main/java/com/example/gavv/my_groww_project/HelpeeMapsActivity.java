@@ -76,7 +76,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     private void findHelper() {
 
         if (helperUid != null) {
-            Log.d("FIND HELPER", "Helper UID " + helperUid);
 
             // Update the helper's data to indicate there is a request.
             DatabaseReference helperRef = USER_REF.child(helperUid);
@@ -111,6 +110,12 @@ public class HelpeeMapsActivity extends AppCompatActivity {
         geoFire.setLocation(HELPEE_UID, new GeoLocation(
                 userLocationController.getUserLocation().getLatitude(),
                 userLocationController.getUserLocation().getLongitude()));
+
+        // Store the request on the database
+        HashMap<String, Object> requestData = new HashMap<>();
+        requestData.put("helperUid", helperUid);
+        requestData.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        ref.child(HELPEE_UID).updateChildren(requestData);
     }
 
     /**
@@ -118,14 +123,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
      */
     private void initRequestButton() {
 
-        if (isMakingRequest) {
-
-            Log.d("InitRequestButton", "MAKING REQUEST IS " + isMakingRequest);
-
-            requestButton.setText("Cancel Request");
-        } else {
-            Log.d("InitRequestButton", "MAKING REQUEST IS " + isMakingRequest);
-        }
+        requestButton = (Button) findViewById(R.id.requestButton);
 
         this.requestButton.setOnClickListener(new View.OnClickListener() {
 
@@ -135,27 +133,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                 DatabaseReference ref =
                         FirebaseDatabase.getInstance().getReference("Requests");
 
-                if (!isMakingRequest) {
+                updateLocationOnDatabase(ref);
+                requestButton.setText("Cancel Request");
 
-                    updateLocationOnDatabase(ref);
-
-                    // Update the making request flag to true and store it in the database.
-                    isMakingRequest = true;
-                    HashMap<String, Object> makingRequest = new HashMap<>();
-                    makingRequest.put("makingRequest", isMakingRequest);
-                    USER_REF.child(HELPEE_UID).updateChildren(makingRequest);
-
-                    HashMap<String, Object> details = new HashMap<String, Object>();
-
-                    details.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                    ref.child(HELPEE_UID).updateChildren(details);
-
-                    findHelper();
-
-                    requestButton.setText("Cancel Request");
-                } else {
-
-                    Toast.makeText(HelpeeMapsActivity.this, "Your request has" +
+                Toast.makeText(HelpeeMapsActivity.this, "Your request has" +
                             "been cancelled", Toast.LENGTH_LONG);
 
                     // Update the making request flag to true and store it in the database.
@@ -165,6 +146,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     USER_REF.child(HELPEE_UID).updateChildren(makingRequest);
 
                     Log.d("Helper Uid", helperUid);
+
+                    // Remove the helper UID.
+                    USER_REF.child(HELPEE_UID).child("helperUid").removeValue();
 
                     // Remove the request on the helper.
                     DatabaseReference helperRef = USER_REF.child(helperUid)
@@ -180,8 +164,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     GeoFire geoFire = new GeoFire(ref);
                     geoFire.removeLocation(HELPEE_UID);
 
-                    requestButton.setText("Request");
-
                     // Delete the destination from the server.
                     DatabaseReference destinationRef = USER_REF.child(HELPEE_UID).child("destination");
                     destinationRef.removeValue();
@@ -189,9 +171,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     // Back to the main activity
                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(intent);
-
-                }
-
             }
         });
 
@@ -267,8 +246,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                 if(dataSnapshot.exists()) {
                     isMakingRequest = dataSnapshot.getValue(boolean.class);
-                    Log.d("Getting Information", "Making Request is" + isMakingRequest);
-
                     helperUid = getIntent().getStringExtra("helper_id");
 
                     if (isMakingRequest) {
@@ -293,8 +270,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
      * Get the helper Uid from the database in case the helpee has made a request before.
      */
     private void getHelperUidFromRequest() {
-        DatabaseReference mHelperUidRef = ROOT_REF.child("Requests").child(HELPEE_UID)
-                .child("helperUid");
+        DatabaseReference mHelperUidRef = ROOT_REF.child(HELPEE_UID).child("helperUid");
 
         mHelperUidRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -302,7 +278,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                 if (dataSnapshot.exists()) {
                     helperUid = dataSnapshot.getValue(String.class);
-                    Log.d("HELPER UID Database", helperUid);
+
+                    Log.d("MY HELPER UID", helperUid);
+                } else {
+                    Log.d("MY HELPER UID", " IS NULL!!" + HELPEE_UID);
                 }
             }
 
@@ -319,9 +298,27 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
         checkDestination();
 
-        getHelperUidFromRequest();
+        helperUid = getIntent().getStringExtra("helper_id");
 
-        getMakingRequestStatus();
+        if (helperUid != null) {
+
+            Log.d("MY HELPER UID", helperUid);
+        } else {
+            Log.d("MY HELPER UID", " IS NULL!!" + HELPEE_UID);
+        }
+
+
+//        getHelperUidFromRequest();
+
+
+
+        initRequestButton();
+
+
+
+
+//
+//        getMakingRequestStatus();
 
     }
 
@@ -351,7 +348,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
             @Override
             public void onLocationChanged(Location location) {
 
-                Log.d("Location", "Changed!");
                 userLocationController.setUserLocation(location);
 
                 if (isMakingRequest) {
@@ -402,8 +398,13 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                 this.userLocationController.setUserLocation(locationManager.
                         getLastKnownLocation(LocationManager.GPS_PROVIDER));
+
+                updateLocationOnDatabase(ROOT_REF.child("Requests"));
+
             }
         }
 
     }
+
+
 }
