@@ -17,14 +17,10 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.Manifest;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
@@ -193,6 +189,11 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         isGuiding = true;
 
+        // Remove the previous path from the map.
+        if (direction != null) {
+            direction.remove();
+        }
+
         // Ensure the destination is not null.
         if (helpeeLocation != null) {
 
@@ -200,33 +201,24 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
             direction = navigationController.displayDirection(
                     helpeeLocation,
                     userLocationController.getDestinationLocation());
-
-            // If it is impossible to get to the destination, display an error message.
-            if (direction == null) {
-
-                Toast.makeText(HelperMapsActivity.this,
-                        "The destination is not achieveable. " +
-                                "Try different transportation mode or " +
-                                "pick another destination point.",
-                        Toast.LENGTH_LONG).show();
-            }
         }
+
         else if (userLocationController.getDestinationLocation() != null && helpeeLocation == null) {
 
             // Find the destination
             direction = navigationController.displayDirection(
                     userLocationController.getUserLocation(),
                     userLocationController.getDestinationLocation());
+        }
 
-            // If it is impossible to get to the destination, display an error message.
-            if (direction == null) {
 
-                Toast.makeText(HelperMapsActivity.this,
-                        "The destination is not achieveable. " +
-                                "Try different transportation mode or pick another destination point.",
-                        Toast.LENGTH_LONG).show();
-            }
+        // If it is impossible to get to the destination, display an error message.
+        if (direction == null) {
 
+            Toast.makeText(HelperMapsActivity.this,
+                    "The destination is not achieveable. " +
+                            "Try different transportation mode or pick another destination point.",
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -280,7 +272,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * Set a button to show a direction from user's location to the chosen destination.
      */
-    private void initDirectionButton() {
+    private void confirmDestinationButton() {
 
         // Show the direction to the destination.
         directionButton = (Button) findViewById(R.id.directionButton);
@@ -290,6 +282,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
             public void onClick(View v) {
 
                 if (userLocationController.getDestinationLocation() != null) {
+
                     startDirection();
 
                     // Send the destination to the Helpee.
@@ -299,6 +292,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                     geoFire.setLocation("destination", new GeoLocation(
                             userLocationController.getDestinationLocation().getLatitude(),
                             userLocationController.getDestinationLocation().getLongitude()));
+
 
                 } else {
                     Toast.makeText(HelperMapsActivity.this,
@@ -401,7 +395,11 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 } else {
 
                     helpeeLocation = null;
+                    userLocationController.setDestinationLocation(null);
                     centerMapOnLocation("Your Location");
+                    Toast.makeText(HelperMapsActivity.this,
+                            "The helpee has cancelled the help request",
+                            Toast.LENGTH_LONG).show();
                     Log.d("Request from Helpee", "NO REQUEST");
                 }
             }
@@ -546,8 +544,9 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         // Set on-click-listener function on the button.
         initUserLocationDetailsButton();
         initDestinationLocationDetailsButton();
-        initDirectionButton();
+        confirmDestinationButton();
         initZoomButton();
+
 
 
     }
