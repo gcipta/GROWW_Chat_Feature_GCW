@@ -75,51 +75,29 @@ public class HelpeeMapsActivity extends AppCompatActivity {
      */
     private void findHelper() {
 
-        Query query = USER_REF.orderByChild("email")
-                .equalTo("williamliandri@yahoo.com");
+        if (helperUid != null) {
+            Log.d("FIND HELPER", "Helper UID " + helperUid);
 
-        query.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            // Update the helper's data to indicate there is a request.
+            DatabaseReference helperRef = USER_REF.child(helperUid);
 
-                if (dataSnapshot != null) {
+            HashMap<String, Object> request = new HashMap<String, Object>();
+            request.put("requestHelpeeID", FirebaseAuth.getInstance().getCurrentUser()
+                    .getUid());
 
-                    for(DataSnapshot datas: dataSnapshot.getChildren()) {
-                        helperUid = datas.getKey();
-                    }
+            helperRef.updateChildren(request);
 
-                    Map<String, String> data = (Map)dataSnapshot.getValue();
 
-                    // Remove the Helpers from the Helpers Available list
-                    DatabaseReference helpersAvaiRef = ROOT_REF.child("HelpersAvailable")
-                            .child(helperUid);
-                    helpersAvaiRef.removeValue();
+            // Set the isHelping flag on the helper to be true.
+            DatabaseReference helpersAvaiRef = helperRef.child("isHelping");
+            helpersAvaiRef.setValue(true);
 
-                    // Update the helper's data to indicate there is a request.
-                    DatabaseReference helperRef = USER_REF.child(helperUid);
-
-                    HashMap<String, Object> request = new HashMap<String, Object>();
-                    request.put("requestHelpeeID", FirebaseAuth.getInstance().getCurrentUser()
-                            .getUid());
-
-                    helperRef.updateChildren(request);
-
-                    // Save the helper UID in the helpee's database.
-                    DatabaseReference reqHelpee = ROOT_REF.child("Requests").child(HELPEE_UID);
-                    HashMap<String, Object> helperUidData = new HashMap<>();
-                    helperUidData.put("helperUid", helperUid);
-                    reqHelpee.updateChildren(helperUidData);
-
-                } else if (dataSnapshot == null) {
-                    Log.d("Find Helper", "Data Snapshot is NULL");
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+            // Save the helper UID in the helpee's database.
+            DatabaseReference reqHelpee = ROOT_REF.child("Requests").child(HELPEE_UID);
+            HashMap<String, Object> helperUidData = new HashMap<>();
+            helperUidData.put("helperUid", helperUid);
+            reqHelpee.updateChildren(helperUidData);
+        }
 
     }
 
@@ -167,16 +145,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     makingRequest.put("makingRequest", isMakingRequest);
                     USER_REF.child(HELPEE_UID).updateChildren(makingRequest);
 
-
                     HashMap<String, Object> details = new HashMap<String, Object>();
 
                     details.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
                     ref.child(HELPEE_UID).updateChildren(details);
-
-                    // Set the isHelping flag on the helper to be true.
-                    DatabaseReference helpersAvaiRef = USER_REF.child(helperUid).child("isHelping");
-                    helpersAvaiRef.setValue(true);
-
 
                     findHelper();
 
