@@ -54,9 +54,10 @@
             android:layout_weight="8"
             android:background="@android:color/white"
             android:ems="10"
-            android:hint="Enter Message..."
-            android:inputType="textPersonName"
+            android:hint="@string/enter_message"
             android:paddingLeft="15dp"
+            android:inputType="text"
+            android:imeOptions="actionSend"
             android:textSize="18sp" />
 
         <ImageButton
