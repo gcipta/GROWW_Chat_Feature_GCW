@@ -632,10 +632,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                 // If the app is guiding the user, then it will update the direction.
                 if (isGuiding) {
-                    direction.remove();
-                    direction = navigationController.displayDirection(
-                            userLocationController.getUserLocation(),
-                            userLocationController.getDestinationLocation());
+                    startDirection();
                 }
 
             }
