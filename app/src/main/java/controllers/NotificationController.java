@@ -8,7 +8,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.example.gavv.my_groww_project.R;
 
-public class NotificationController {
+public class NotificationController implements INotificationComponent {
 
     private Context context;
     private NotificationManager notificationManager;
@@ -30,6 +30,7 @@ public class NotificationController {
      * @param title
      * @param content
      */
+    @Override
     public void showNotification(String title, String content) {
 
         this.title = title;
