@@ -1,5 +1,7 @@
 package com.example.gavv.my_groww_project;
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -24,6 +26,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
+import controllers.NotificationController;
+
 public class MainActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
@@ -41,9 +45,44 @@ public class MainActivity extends AppCompatActivity {
     private Button mNavigationButton;
 
     private static final String HELPEE = "helpee";
+    private static final String HELPER = "helper";
     private String role;
     private boolean isMakingRequest;
     private String helperUid;
+
+    private NotificationController notificationController;
+    private boolean showingRequestNotification = false;
+
+
+    private void initRequestNotifications() {
+
+        if (role.equals("helper")) {
+
+            // Create a database reference
+            DatabaseReference mHelperRef = FirebaseDatabase.getInstance().getReference()
+                    .child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            mHelperRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.child("requestHelpeeID").exists()) {
+
+                        notificationController.showNotification("A helpee ask for your help!",
+                                "Open the app now to help your " +
+                                        "helpee!!");
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +90,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
+
+        // Initialise the notification controller.
+        NotificationManager notificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationController = new NotificationController(this,
+                notificationManager, getResources());
 
         mToolbar = (Toolbar) findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolbar);
@@ -71,6 +116,8 @@ public class MainActivity extends AppCompatActivity {
 
         mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
+
+
 
     }
 
@@ -135,9 +182,17 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                                if(dataSnapshot.exists()) {
+                                if(dataSnapshot.exists() && !showingRequestNotification) {
 
                                     isMakingRequest = dataSnapshot.getValue(boolean.class);
+                                    showingRequestNotification = true;
+                                }
+
+                                // In case the request has been completed or cancelled by the
+                                // helpee, set the flag to false to show the request notification
+                                // if there is another request.
+                                else if (!dataSnapshot.exists()) {
+                                    showingRequestNotification = false;
                                 }
                             }
 
@@ -163,6 +218,8 @@ public class MainActivity extends AppCompatActivity {
                             }
                         });
 
+                    } else if (role.equals(HELPER)) {
+                        initRequestNotifications();
                     }
                 }
             }

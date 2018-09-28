@@ -100,8 +100,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     private DatabaseReference mHelpeeDest;
     private Location helpeeLocation = null;
 
-    private NotificationController notificationController;
-
 
     /**
      * A function to listen to the GPS provider.
@@ -395,10 +393,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                     getHelpeeLocation();
 
-                    notificationController.showNotification("A helpee ask for your help!",
-                            "Open the app now to help your " +
-                                    "helpee!!");
-
                     Log.d("Request from Helpee", helpeeUid);
                 } else {
 
@@ -573,13 +567,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-        // Initialise the notification controller.
-        NotificationManager notificationManager = (NotificationManager)
-                getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationController = new NotificationController(this, notificationManager,
-                getResources());
-
 
         // Set on-click-listener function on the button.
         initUserLocationDetailsButton();
