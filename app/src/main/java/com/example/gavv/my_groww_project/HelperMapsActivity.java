@@ -1,5 +1,6 @@
 package com.example.gavv.my_groww_project;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -59,6 +60,7 @@ import java.util.Locale;
 import adapter.PlaceAutocompleteAdapter;
 import controllers.LocationController;
 import controllers.NavigationController;
+import controllers.NotificationController;
 
 public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
@@ -97,6 +99,8 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     private String helpeeUid = "";
     private DatabaseReference mHelpeeDest;
     private Location helpeeLocation = null;
+
+    private NotificationController notificationController;
 
 
     /**
@@ -391,6 +395,10 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                     getHelpeeLocation();
 
+                    notificationController.showNotification("A helpee ask for your help!",
+                            "Open the app now to help your " +
+                                    "helpee!!");
+
                     Log.d("Request from Helpee", helpeeUid);
                 } else {
 
@@ -565,6 +573,12 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        // Initialise the notification controller.
+        NotificationManager notificationManager = (NotificationManager)
+                getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationController = new NotificationController(this, notificationManager,
+                getResources());
 
 
         // Set on-click-listener function on the button.

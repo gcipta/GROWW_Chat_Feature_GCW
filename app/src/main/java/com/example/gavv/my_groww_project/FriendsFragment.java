@@ -3,6 +3,7 @@ package com.example.gavv.my_groww_project;
 
 
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +35,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.HashMap;
 
+import controllers.NotificationController;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 
@@ -57,7 +59,6 @@ public class FriendsFragment extends Fragment {
     private boolean mMakingRequest;
 
     private boolean isHelperHelping;
-
 
     public FriendsFragment() {
         // Required empty public constructor
@@ -87,8 +88,6 @@ public class FriendsFragment extends Fragment {
         // Inflate the layout for this fragment
         return mMainView;
     }
-
-
 
     @Override
     public void onStart() {
