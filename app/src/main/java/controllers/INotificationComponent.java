@@ -7,5 +7,5 @@ public interface INotificationComponent {
      * @param title
      * @param content
      */
-    public void showNotification(String title, String content);
+    void showNotification(String title, String content);
 }
