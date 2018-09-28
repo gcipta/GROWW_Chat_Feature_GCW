@@ -34,21 +34,26 @@ public class DataParser {
         try {
             jsonObject = new JSONObject(jsonData);
 
-            jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0)
-                    .getJSONArray("legs")
-                    .getJSONObject(0)
-                    .getJSONArray("steps");
+            if (jsonObject.getJSONArray("routes").length() > 0) {
+                jsonArray = jsonObject.getJSONArray("routes").getJSONObject(0)
+                        .getJSONArray("legs")
+                        .getJSONObject(0)
+                        .getJSONArray("steps");
+
+                if (options == ROUTES) {
+
+                    return getRoutes(jsonArray);
+                } else if (options == POLYLINES) {
+
+                    return getPolylines(jsonArray);
+                }
+            } else {
+
+                return null;
+            }
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-
-        if (options == ROUTES) {
-
-            return getRoutes(jsonArray);
-        } else if (options == POLYLINES) {
-
-            return getPolylines(jsonArray);
         }
 
         return null;

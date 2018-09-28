@@ -3,7 +3,9 @@ package controllers;
 import android.graphics.Color;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.example.gavv.my_groww_project.HelperMapsActivity;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polyline;
@@ -84,24 +86,30 @@ public class NavigationController implements INavigationComponent {
             DownloadJsonApi downloadJsonApi= new DownloadJsonApi();
             JSONObject routes = downloadJsonApi.readJsonFromUrl(url);
 
-            // Parse the routes
-            DataParser dataParser = new DataParser();
+            // There is a way to get to the destination, then the map will display the routes.
+            if (routes != null) {
 
-            // Get the polylines and show it on the map
-            List<LatLng> mPolylines= dataParser.parseDirections(routes.toString(),
-                    DataParser.POLYLINES);
+                // Parse the routes
+                DataParser dataParser = new DataParser();
 
-            Log.d("mPolylines", mPolylines.toString());
+                // Get the polylines and show it on the map
+                List<LatLng> mPolylines = dataParser.parseDirections(routes.toString(),
+                        DataParser.POLYLINES);
 
-            PolylineOptions routeCoordinates = new PolylineOptions();
+                Log.d("mPolylines", mPolylines.toString());
 
-            for(LatLng latLng : mPolylines) {
-                routeCoordinates.add(new LatLng(latLng.latitude, latLng.longitude));
+                PolylineOptions routeCoordinates = new PolylineOptions();
+
+                for (LatLng latLng : mPolylines) {
+                    routeCoordinates.add(new LatLng(latLng.latitude, latLng.longitude));
+                }
+
+                routeCoordinates.width(10).color(Color.parseColor("#1684FD"));
+                direction = mMap.addPolyline(routeCoordinates);
+            } else {
+
+                return null;
             }
-
-            routeCoordinates.width(10).color(Color.parseColor("#1684FD"));
-            direction = mMap.addPolyline(routeCoordinates);
-
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -112,6 +120,7 @@ public class NavigationController implements INavigationComponent {
         finally {
             return direction;
         }
+
 
     }
 }
