@@ -416,8 +416,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
      */
     private void getHelpeeLocation() {
 
-//        DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid).child("l");
-
         DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid);
 
         helpeeLocRef.addValueEventListener(new ValueEventListener() {
@@ -432,10 +430,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                             .getValue(Double.class));
                     helpeeLocation.setLongitude((Double) dataSnapshot.child("longitude")
                             .getValue(Double.class));
-//                    helpeeLocation.setLatitude((Double)
-//                            dataSnapshot.child("0").getValue(Double.class));
-//                    helpeeLocation.setLongitude((Double)
-//                            dataSnapshot.child("1").getValue(Double.class));
 
                     LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
                             helpeeLocation.getLongitude());
@@ -450,6 +444,33 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             }
         });
+
+        // Check the destination of the helpee (in case we have given the destination before).
+        DatabaseReference helpeeDestRef = USER_REF.child(helpeeUid).child("destination");
+
+        helpeeDestRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+
+                    Location helpeeDestination = new Location("");
+                    helpeeDestination.setLatitude((Double) dataSnapshot.child("l").child("0")
+                            .getValue(Double.class));
+                    helpeeDestination.setLongitude((Double) dataSnapshot.child("l").child("1")
+                            .getValue(Double.class));
+                    userLocationController.setDestinationLocation(helpeeDestination);
+                    centerMapOnLocation("Your Location");
+                    startDirection();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     /**
