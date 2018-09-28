@@ -54,6 +54,7 @@ public class FriendsFragment extends Fragment {
     private View mMainView;
 
     private String mRole;
+    private boolean mMakingRequest;
 
     private boolean isHelperHelping;
 
@@ -120,6 +121,29 @@ public class FriendsFragment extends Fragment {
             }
         });
 
+        // If it is a helpee, get the status whether the helpee has made a help request or not.
+        if (mRole != null && mRole.equals("helpee")) {
+            DatabaseReference mIsMakingRequestRef = FirebaseDatabase.getInstance().getReference()
+                    .child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child("makingRequest");
+
+            mIsMakingRequestRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    if (dataSnapshot.exists()) {
+                        mMakingRequest = dataSnapshot.getValue(boolean.class);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+
+        }
+
 
         FirebaseRecyclerAdapter<Friends, FriendsViewHolder> firebaseRecyclerAdapter =
                 new FirebaseRecyclerAdapter<Friends, FriendsViewHolder>(options) {
@@ -158,7 +182,8 @@ public class FriendsFragment extends Fragment {
                                         CharSequence options[] = new CharSequence[]{"Open Profile", "Send message"};
 
 
-                                        if(userRole.equals("helper") && mRole.equals("helpee")){
+                                        if(userRole.equals("helper") && mRole.equals("helpee") &&
+                                                !mMakingRequest){
 
                                             options = new CharSequence[]{"Open Profile", "Send message", "Send Help Request"};
 
