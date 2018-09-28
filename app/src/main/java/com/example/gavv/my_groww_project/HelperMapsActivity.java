@@ -416,21 +416,26 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
      */
     private void getHelpeeLocation() {
 
-        DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid).child("l");
+//        DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid).child("l");
+
+        DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid);
 
         helpeeLocRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                 // Get the latitude and longitude of the helpee.
-                if (dataSnapshot.exists() && dataSnapshot.child("0").exists()
-                        && dataSnapshot.child("1").exists()) {
+                if (dataSnapshot.exists()) {
 
                     helpeeLocation = new Location("");
-                    helpeeLocation.setLatitude((Double)
-                            dataSnapshot.child("0").getValue(Double.class));
-                    helpeeLocation.setLongitude((Double)
-                            dataSnapshot.child("1").getValue(Double.class));
+                    helpeeLocation.setLatitude((Double) dataSnapshot.child("latitude")
+                            .getValue(Double.class));
+                    helpeeLocation.setLongitude((Double) dataSnapshot.child("longitude")
+                            .getValue(Double.class));
+//                    helpeeLocation.setLatitude((Double)
+//                            dataSnapshot.child("0").getValue(Double.class));
+//                    helpeeLocation.setLongitude((Double)
+//                            dataSnapshot.child("1").getValue(Double.class));
 
                     LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
                             helpeeLocation.getLongitude());

@@ -22,6 +22,8 @@ import android.widget.Toast;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,7 +55,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
     private Button requestButton;
     private String helperUid;
-    private boolean isMakingRequest;
 
 
     /**
@@ -71,51 +72,34 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     }
 
     /**
-     * A function to pair the helpee with the available helper on the list.
-     */
-    private void findHelper() {
-
-        if (helperUid != null) {
-
-            // Update the helper's data to indicate there is a request.
-            DatabaseReference helperRef = USER_REF.child(helperUid);
-
-            HashMap<String, Object> request = new HashMap<String, Object>();
-            request.put("requestHelpeeID", FirebaseAuth.getInstance().getCurrentUser()
-                    .getUid());
-
-            helperRef.updateChildren(request);
-
-
-            // Set the isHelping flag on the helper to be true.
-            DatabaseReference helpersAvaiRef = helperRef.child("isHelping");
-            helpersAvaiRef.setValue(true);
-
-            // Save the helper UID in the helpee's database.
-            DatabaseReference reqHelpee = ROOT_REF.child("Requests").child(HELPEE_UID);
-            HashMap<String, Object> helperUidData = new HashMap<>();
-            helperUidData.put("helperUid", helperUid);
-            reqHelpee.updateChildren(helperUidData);
-        }
-
-    }
-
-    /**
      * A function to update helpee's location on the database.
      */
     private void updateLocationOnDatabase(DatabaseReference ref) {
 
-        GeoFire geoFire = new GeoFire(ref);
-
-        geoFire.setLocation(HELPEE_UID, new GeoLocation(
-                userLocationController.getUserLocation().getLatitude(),
-                userLocationController.getUserLocation().getLongitude()));
+//        GeoFire geoFire = new GeoFire(ref);
+//
+//        geoFire.setLocation(HELPEE_UID, new GeoLocation(
+//                userLocationController.getUserLocation().getLatitude(),
+//                userLocationController.getUserLocation().getLongitude()),
+//                new GeoFire.CompletionListener(){
+//                    @Override
+//                    public void onComplete(String key, DatabaseError error) {
+//
+//                    }
+//                });
+//
+//        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(
+//                userLocationController.getUserLocation().getLatitude(),
+//                userLocationController.getUserLocation().getLongitude()),0.1);
 
         // Store the request on the database
         HashMap<String, Object> requestData = new HashMap<>();
         requestData.put("helperUid", helperUid);
         requestData.put("email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        requestData.put("latitude", userLocationController.getUserLocation().getLatitude());
+        requestData.put("longitude", userLocationController.getUserLocation().getLongitude());
         ref.child(HELPEE_UID).updateChildren(requestData);
+
     }
 
     /**
@@ -140,9 +124,8 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                             "been cancelled", Toast.LENGTH_LONG);
 
                     // Update the making request flag to true and store it in the database.
-                    isMakingRequest = false;
                     HashMap<String, Object> makingRequest = new HashMap<>();
-                    makingRequest.put("makingRequest", isMakingRequest);
+                    makingRequest.put("makingRequest", false);
                     USER_REF.child(HELPEE_UID).updateChildren(makingRequest);
 
                     Log.d("Helper Uid", helperUid);
@@ -272,9 +255,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
                 userLocationController.setUserLocation(location);
 
-                if (isMakingRequest) {
-                    updateLocationOnDatabase(ROOT_REF.child("Requests"));
-                }
+                Log.d("Helpee's Location", "Changed!!");
+
+                // Update the helpee's position on the database
+                updateLocationOnDatabase(ROOT_REF.child("Requests"));
 
             }
 
