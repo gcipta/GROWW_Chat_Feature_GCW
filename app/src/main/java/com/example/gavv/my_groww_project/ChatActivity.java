@@ -139,19 +139,6 @@ public class ChatActivity extends AppCompatActivity {
 
         loadMessages();
 
-        // Add a functionality such that when Enter is pressed, it will send the message.
-        mChatMessageView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                boolean handled = false;
-                if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    sendMessage();
-                    handled = true;
-                }
-                return handled;
-            }
-        });
-
 
         mTitleView.setText(userName);
 
@@ -233,6 +220,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 sendMessage();
+
+                // Clear the chat once it sends.
+                mChatMessageView.setText("");
 
             }
         });

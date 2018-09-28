@@ -56,8 +56,8 @@
             android:ems="10"
             android:hint="@string/enter_message"
             android:paddingLeft="15dp"
-            android:inputType="text"
-            android:imeOptions="actionSend"
+            android:inputType="textMultiLine"
+            android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890\n "/>
             android:textSize="18sp" />
 
         <ImageButton
