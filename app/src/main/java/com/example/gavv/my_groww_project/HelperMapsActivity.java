@@ -1,5 +1,6 @@
 package com.example.gavv.my_groww_project;
 
+import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -65,7 +66,7 @@ import controllers.NotificationController;
 public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerDragListener,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
 
@@ -156,7 +157,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         helpeeLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
                         mMap.getCameraPosition().zoom));
-            }  else {
+            } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
                         15));
             }
@@ -203,9 +204,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
             direction = navigationController.displayDirection(
                     helpeeLocation,
                     userLocationController.getDestinationLocation());
-        }
-
-        else if (userLocationController.getDestinationLocation() != null && helpeeLocation == null) {
+        } else if (userLocationController.getDestinationLocation() != null && helpeeLocation == null) {
 
             // Find the destination
             direction = navigationController.displayDirection(
@@ -399,9 +398,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                     helpeeLocation = null;
                     userLocationController.setDestinationLocation(null);
                     centerMapOnLocation("Your Location");
-                    Toast.makeText(HelperMapsActivity.this,
-                            "The helpee has cancelled the help request",
-                            Toast.LENGTH_LONG).show();
+
                     Log.d("Request from Helpee", "NO REQUEST");
                 }
             }
@@ -528,7 +525,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             final Place place = places.get(0);
 
-            Log.d("Place details:",  "LatLng: " + place.getLatLng());
+            Log.d("Place details:", "LatLng: " + place.getLatLng());
             Log.d("Place details: ", "Address" + place.getAddress());
 
             // Update the destination and show it.
@@ -573,7 +570,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         initDestinationLocationDetailsButton();
         confirmDestinationButton();
         initZoomButton();
-
 
 
     }
@@ -667,12 +663,12 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         getLastKnownLocation(LocationManager.GPS_PROVIDER));
 
                 if (this.userLocationController.getUserLocation() != null) {
+
+                    initSearchBar();
                     centerMapOnLocation("Your Location");
                 }
             }
         }
-
-        initSearchBar();
 
     }
 
