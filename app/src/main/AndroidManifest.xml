@@ -83,9 +83,6 @@
             android:name=".HelperMapsActivity"
             android:label="@string/title_activity_helper_maps" />
         <activity android:name=".HelpeeMapsActivity"></activity>
-
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
-
     </application>
 
 </manifest>
