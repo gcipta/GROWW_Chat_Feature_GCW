@@ -57,7 +57,7 @@ public class NavigationController implements INavigationComponent {
     }
 
     @Override
-    public CompassDirection setCompass(Location helpee, Location target) {
+    public CompassDirection setCompass(Location startPoint, Location endPoint) {
         return null;
     }
 
@@ -67,8 +67,21 @@ public class NavigationController implements INavigationComponent {
     }
 
     @Override
-    public void displayCompassDirection(CompassDirection direc) {
+    public List<CompassDirection> getCompassDirection(Location userLocation,
+                                                      Location destinationLocation) {
 
+        List<CompassDirection> directions = new ArrayList<>();
+
+//        // Generate the URL
+//        String url = getDirectionsUrl(userLocation, destinationLocation);
+//
+//        // Download the routes as JSON.
+//        DownloadJsonApi downloadJsonApi = new DownloadJsonApi();
+
+
+
+
+        return directions;
     }
 
     @Override

@@ -25,6 +25,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -41,6 +42,7 @@ import java.util.Map;
 
 import controllers.GuideNoteController;
 import controllers.LocationController;
+import controllers.NavigationController;
 
 public class HelpeeMapsActivity extends AppCompatActivity {
 
@@ -58,6 +60,10 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
     private Button requestButton;
     private String helperUid;
+
+    private NavigationController navigationController;
+    private List<LatLng> routesToDestination;
+
 
 
     /**
@@ -186,7 +192,8 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     destinationLocation.setLongitude(dataSnapshot.child("l").child("1")
                             .getValue(Double.class));
 
-                    // Get the routes to the destination.
+                    // Get the compass direction relative to the destination.
+
 
                     TextView destinationTextView = (TextView) findViewById(R.id.destination);
                     String location = "Lat: " + destinationLocation.getLatitude() + "\n"
@@ -202,6 +209,28 @@ public class HelpeeMapsActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    /**
+     * Get the last known location.
+     * @return last known location.
+     */
+    private Location getLastKnownLocation() {
+        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            @SuppressLint("MissingPermission") Location l =
+                    locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
     }
 
     @Override
@@ -220,6 +249,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_helpee_maps);
+
+        // Initialise the navigation controller
+        navigationController = new NavigationController(null);
 
         // Initialise the Guide Note Controller.
         guideNoteController = (GuideNoteController) this.getSupportFragmentManager()
@@ -291,8 +323,7 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                         5000, 0, locationListener);
 
 
-                this.userLocationController.setUserLocation(locationManager.
-                        getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                this.userLocationController.setUserLocation(getLastKnownLocation());
 
                 updateLocationOnDatabase(ROOT_REF.child("Requests"));
 
@@ -300,6 +331,5 @@ public class HelpeeMapsActivity extends AppCompatActivity {
         }
 
     }
-
 
 }
