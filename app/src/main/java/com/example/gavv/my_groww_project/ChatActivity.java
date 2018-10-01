@@ -14,8 +14,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -218,6 +220,9 @@ public class ChatActivity extends AppCompatActivity {
             public void onClick(View view) {
 
                 sendMessage();
+
+                // Clear the chat once it sends.
+                mChatMessageView.setText("");
 
             }
         });

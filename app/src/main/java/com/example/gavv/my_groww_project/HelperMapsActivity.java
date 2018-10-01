@@ -1,6 +1,6 @@
 package com.example.gavv.my_groww_project;
 
-import android.app.NotificationManager;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -65,7 +65,7 @@ import controllers.NotificationController;
 public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerDragListener,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
 
@@ -156,7 +156,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         helpeeLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
                         mMap.getCameraPosition().zoom));
-            }  else {
+            } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
                         15));
             }
@@ -203,9 +203,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
             direction = navigationController.displayDirection(
                     helpeeLocation,
                     userLocationController.getDestinationLocation());
-        }
-
-        else if (userLocationController.getDestinationLocation() != null && helpeeLocation == null) {
+        } else if (userLocationController.getDestinationLocation() != null && helpeeLocation == null) {
 
             // Find the destination
             direction = navigationController.displayDirection(
@@ -399,9 +397,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                     helpeeLocation = null;
                     userLocationController.setDestinationLocation(null);
                     centerMapOnLocation("Your Location");
-                    Toast.makeText(HelperMapsActivity.this,
-                            "The helpee has cancelled the help request",
-                            Toast.LENGTH_LONG).show();
+
                     Log.d("Request from Helpee", "NO REQUEST");
                 }
             }
@@ -528,7 +524,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             final Place place = places.get(0);
 
-            Log.d("Place details:",  "LatLng: " + place.getLatLng());
+            Log.d("Place details:", "LatLng: " + place.getLatLng());
             Log.d("Place details: ", "Address" + place.getAddress());
 
             // Update the destination and show it.
@@ -548,6 +544,28 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         }
     };
+
+    /**
+     * Get the last known location.
+     * @return last known location.
+     */
+    private Location getLastKnownLocation() {
+        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            @SuppressLint("MissingPermission") Location l =
+                    locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -573,7 +591,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         initDestinationLocationDetailsButton();
         confirmDestinationButton();
         initZoomButton();
-
 
 
     }
@@ -663,16 +680,15 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         5000, 0, locationListener);
 
 
-                this.userLocationController.setUserLocation(locationManager.
-                        getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                this.userLocationController.setUserLocation(getLastKnownLocation());
 
                 if (this.userLocationController.getUserLocation() != null) {
+
+                    initSearchBar();
                     centerMapOnLocation("Your Location");
                 }
             }
         }
-
-        initSearchBar();
 
     }
 
