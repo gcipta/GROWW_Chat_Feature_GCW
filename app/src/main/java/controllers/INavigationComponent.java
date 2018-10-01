@@ -20,7 +20,7 @@ public interface INavigationComponent {
      * @param endPoint the target location, that the helpee headed towards
      * @return the compass direction required for the helpee
      */
-    CompassDirection setCompass(Location startPoint, Location endPoint);
+    CompassDirection setCompass(LatLng startPoint, LatLng endPoint);
 
     /**
      * edit a compass direction

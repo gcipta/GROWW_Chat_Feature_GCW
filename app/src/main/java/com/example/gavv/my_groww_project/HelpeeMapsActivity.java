@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,6 +45,7 @@ import java.util.Map;
 import controllers.GuideNoteController;
 import controllers.LocationController;
 import controllers.NavigationController;
+import models.CompassDirection;
 
 public class HelpeeMapsActivity extends AppCompatActivity {
 
@@ -62,8 +64,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     private Button requestButton;
     private String helperUid;
 
+    private ImageView arrowImage;
     private NavigationController navigationController;
-    private List<LatLng> routesToDestination;
+    private List<CompassDirection> compassDirections;
 
 
 
@@ -197,8 +200,12 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     userLocationController.setDestinationLocation(destinationLocation);
 
                     // Get the compass direction relative to the destination.
-                    navigationController.getCompassDirection(
+                    compassDirections = navigationController.getCompassDirection(
                             userLocationController.getUserLocation(), destinationLocation);
+
+                    // Set the arrow to the angle.
+                    arrowImage.setRotation(compassDirections.get(0).getDirection());
+
 
                     TextView destinationTextView = (TextView) findViewById(R.id.destination);
                     String location = "Lat: " + destinationLocation.getLatitude() + "\n"
@@ -270,6 +277,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                 "On Faraday Street Take Bus no. 767");
         guideNoteController.createGuideNote("University of Melbourne",
                 "Get off at University of Melbourne Stop");
+
+        // Initialise the ImageView
+        arrowImage = (ImageView) findViewById(R.id.arrowImage);
 
         // Need this to be able to download JSON from URL.
         if (android.os.Build.VERSION.SDK_INT > 9) {

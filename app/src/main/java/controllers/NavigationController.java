@@ -56,9 +56,40 @@ public class NavigationController implements INavigationComponent {
         return url.toString();
     }
 
+    /**
+     * A function to get the direction angle to the destination.
+     * @return angle in degrees
+     */
+    private Double findDirectionAngle(LatLng startPoint, LatLng endPoint) {
+
+        Double diffLat = endPoint.latitude - startPoint.latitude;
+        Double diffLng = endPoint.longitude - startPoint.longitude;
+
+        if (diffLat > 0 && diffLng < 0) {
+
+            return 360.0 - Math.toDegrees(Math.atan(Math.abs(diffLng/diffLat)));
+        } else if (diffLat < 0 && diffLng < 0) {
+
+            return 180 + Math.toDegrees(Math.atan(Math.abs(diffLng/diffLat)));
+        } else if (diffLat < 0 && diffLng > 0) {
+
+            return 90 + Math.toDegrees(Math.atan(Math.abs(diffLng/diffLat)));
+        }
+
+        return Math.toDegrees(Math.atan(diffLng/diffLat));
+
+    }
+
     @Override
-    public CompassDirection setCompass(Location startPoint, Location endPoint) {
-        return null;
+    public CompassDirection setCompass(LatLng startPoint, LatLng endPoint) {
+
+
+        // Find the direction angle and return it
+        Log.d("Angle Compass", findDirectionAngle(startPoint, endPoint).toString());
+        CompassDirection compassDirection = new CompassDirection(
+                Float.parseFloat(findDirectionAngle(startPoint, endPoint).toString()));
+
+        return compassDirection;
     }
 
     @Override
@@ -81,8 +112,8 @@ public class NavigationController implements INavigationComponent {
             DownloadJsonApi downloadJsonApi = new DownloadJsonApi();
             JSONObject routes = downloadJsonApi.readJsonFromUrl(url);
 
-            // There is a way to get to the destination, then it will show the arrow direction on the
-            // screen.
+            // There is a way to get to the destination, then it will show the arrow direction
+            // on the screen.
             if (routes != null) {
 
                 // Get the list of Latitude and Longitude of the routes.
@@ -93,7 +124,12 @@ public class NavigationController implements INavigationComponent {
 
                 Log.d("ROUTES TO DESTINATION", latLngRoutes.toString());
 
+                // Find the arrow direction from the user's location to the destination
+                for (int i = 0; i < latLngRoutes.size() - 1; i++) {
 
+                    directions.add(setCompass(latLngRoutes.get(i), latLngRoutes.get(i + 1)));
+
+                }
             }
 
 
@@ -103,7 +139,9 @@ public class NavigationController implements INavigationComponent {
             e.printStackTrace();
         }
 
-        return directions;
+        finally {
+            return directions;
+        }
     }
 
     @Override
@@ -155,7 +193,5 @@ public class NavigationController implements INavigationComponent {
         finally {
             return direction;
         }
-
-
     }
 }
