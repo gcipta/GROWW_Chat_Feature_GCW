@@ -72,14 +72,36 @@ public class NavigationController implements INavigationComponent {
 
         List<CompassDirection> directions = new ArrayList<>();
 
-//        // Generate the URL
-//        String url = getDirectionsUrl(userLocation, destinationLocation);
-//
-//        // Download the routes as JSON.
-//        DownloadJsonApi downloadJsonApi = new DownloadJsonApi();
+        // Generate the URL
+        String url = getDirectionsUrl(userLocation, destinationLocation);
 
 
+        try {
+            // Download the routes as JSON.
+            DownloadJsonApi downloadJsonApi = new DownloadJsonApi();
+            JSONObject routes = downloadJsonApi.readJsonFromUrl(url);
 
+            // There is a way to get to the destination, then it will show the arrow direction on the
+            // screen.
+            if (routes != null) {
+
+                // Get the list of Latitude and Longitude of the routes.
+                DataParser dataParser = new DataParser();
+
+                List<LatLng> latLngRoutes = dataParser.parseDirections(routes.toString(),
+                        DataParser.ROUTES);
+
+                Log.d("ROUTES TO DESTINATION", latLngRoutes.toString());
+
+
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         return directions;
     }

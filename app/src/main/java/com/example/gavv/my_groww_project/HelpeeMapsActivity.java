@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -192,8 +193,12 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     destinationLocation.setLongitude(dataSnapshot.child("l").child("1")
                             .getValue(Double.class));
 
-                    // Get the compass direction relative to the destination.
+                    // Set the destination on the LocationController.
+                    userLocationController.setDestinationLocation(destinationLocation);
 
+                    // Get the compass direction relative to the destination.
+                    navigationController.getCompassDirection(
+                            userLocationController.getUserLocation(), destinationLocation);
 
                     TextView destinationTextView = (TextView) findViewById(R.id.destination);
                     String location = "Lat: " + destinationLocation.getLatitude() + "\n"
@@ -265,6 +270,13 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                 "On Faraday Street Take Bus no. 767");
         guideNoteController.createGuideNote("University of Melbourne",
                 "Get off at University of Melbourne Stop");
+
+        // Need this to be able to download JSON from URL.
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy =
+                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 
 
         // Initialise the location manager and location listener to get the the helpee's location.
