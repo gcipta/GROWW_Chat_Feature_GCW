@@ -1,6 +1,7 @@
 package com.example.gavv.my_groww_project;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,7 +33,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -75,22 +78,6 @@ public class HelpeeMapsActivity extends AppCompatActivity {
      * A function to update helpee's location on the database.
      */
     private void updateLocationOnDatabase(DatabaseReference ref) {
-
-//        GeoFire geoFire = new GeoFire(ref);
-//
-//        geoFire.setLocation(HELPEE_UID, new GeoLocation(
-//                userLocationController.getUserLocation().getLatitude(),
-//                userLocationController.getUserLocation().getLongitude()),
-//                new GeoFire.CompletionListener(){
-//                    @Override
-//                    public void onComplete(String key, DatabaseError error) {
-//
-//                    }
-//                });
-//
-//        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(
-//                userLocationController.getUserLocation().getLatitude(),
-//                userLocationController.getUserLocation().getLongitude()),0.1);
 
         // Store the request on the database
         HashMap<String, Object> requestData = new HashMap<>();
@@ -198,6 +185,8 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                             .getValue(Double.class));
                     destinationLocation.setLongitude(dataSnapshot.child("l").child("1")
                             .getValue(Double.class));
+
+                    // Get the routes to the destination.
 
                     TextView destinationTextView = (TextView) findViewById(R.id.destination);
                     String location = "Lat: " + destinationLocation.getLatitude() + "\n"

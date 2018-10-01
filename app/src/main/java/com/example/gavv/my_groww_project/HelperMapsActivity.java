@@ -1,7 +1,6 @@
 package com.example.gavv.my_groww_project;
 
 import android.annotation.SuppressLint;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -546,6 +545,28 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     };
 
+    /**
+     * Get the last known location.
+     * @return last known location.
+     */
+    private Location getLastKnownLocation() {
+        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            @SuppressLint("MissingPermission") Location l =
+                    locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -659,8 +680,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         5000, 0, locationListener);
 
 
-                this.userLocationController.setUserLocation(locationManager.
-                        getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                this.userLocationController.setUserLocation(getLastKnownLocation());
 
                 if (this.userLocationController.getUserLocation() != null) {
 
