@@ -17,7 +17,7 @@
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="355dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         tools:context=".HelperMapsActivity" />
@@ -62,41 +62,39 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="161dp"
+        android:layout_marginBottom="145dp"
+        android:background="@color/colorPrimary"
         android:text="Show User Location Details"
-        android:textColor="@color/colorAccent"
-        android:background="@color/colorPrimary"/>
+        android:textColor="@color/colorAccent" />
 
     <Button
         android:id="@+id/showDestinationDetailsButton"
-        android:layout_width="200dp"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="102dp"
+        android:layout_marginBottom="86dp"
+        android:background="@color/colorPrimary"
         android:text="Show Destination Details"
-        android:textColor="@color/colorAccent"
-        android:background="@color/colorPrimary"/>
+        android:textColor="@color/colorAccent" />
 
     <Button
         android:id="@+id/directionButton"
-        android:layout_width="180dp"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="39dp"
+        android:layout_marginBottom="27dp"
+        android:background="@color/colorPrimary"
         android:text="Confirm Destination"
-        android:textColor="@color/colorAccent"
-        android:background="@color/colorPrimary"/>
+        android:textColor="@color/colorAccent" />
 
     <Button
         android:id="@+id/zoomInButton"
         android:layout_width="56dp"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/map"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginEnd="60dp"
-        android:layout_marginTop="242dp"
         android:background="@color/colorPrimary"
         android:text="+"
         android:textColor="@color/colorAccent" />
@@ -105,9 +103,8 @@
         android:id="@+id/zoomOutButton"
         android:layout_width="56dp"
         android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/map"
         android:layout_alignParentStart="true"
-        android:layout_alignTop="@+id/zoomInButton"
-        android:layout_marginStart="60dp"
         android:background="@color/colorPrimary"
         android:text="- "
         android:textColor="@color/colorAccent" />
