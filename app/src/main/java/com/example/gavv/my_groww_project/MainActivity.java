@@ -8,13 +8,15 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    Button button;
+    Button helperActButton;
+    Button helpeeActButton;
     Button signUpButton;
+    Button signInButton;
     Button voiceCallButton;
 
     public void goToMap() {
 
-        Intent intent = new Intent(this, MapsActivity.class);
+        Intent intent = new Intent(this, HelperMapsActivity.class);
 
         startActivity(intent);
     }
@@ -26,7 +28,19 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void gotToVoiceCall(){
+    public void goToHelpeeAct() {
+
+        Intent intent = new Intent(this, HelpeeMapsActivity.class);
+        startActivity(intent);
+    }
+
+    public void goToSignIn(){
+        Intent intent = new Intent(this, SignInActivity.class);
+
+        startActivity(intent);
+    }
+
+    public void goToVoiceCall() {
 
         Intent intent = new Intent(this, VoiceActivity.class);
 
@@ -38,18 +52,37 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.button);
+        helperActButton = (Button) findViewById(R.id.helperActButton);
+
+        helpeeActButton = (Button) findViewById(R.id.helpeeActButton);
 
         signUpButton = (Button) findViewById(R.id.signUpButton);
 
-        voiceCallButton = (Button) findViewById(R.id.voiceActivityButton);
+        signInButton = findViewById(R.id.signInButton);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        voiceCallButton = findViewById(R.id.voiceActivityButton);
+
+        helperActButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 goToMap();
             }
         });
+
+        helpeeActButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToHelpeeAct();
+            }
+        });
+
+        signInButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goToSignIn();
+            }
+        });
+
 
         signUpButton.setOnClickListener(new View.OnClickListener() {
 
@@ -62,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         voiceCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gotToVoiceCall();
+                goToVoiceCall();
             }
         });
 

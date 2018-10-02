@@ -1,7 +1,8 @@
 package controllers;
 
+import android.location.Location;
+
 import models.GuideNote;
-import models.Location;
 
 public interface IGuideNoteComponent {
 
@@ -10,7 +11,7 @@ public interface IGuideNoteComponent {
      * @param note text string of the message
      * @return the a new GuideNote
      */
-    GuideNote createGuideNote(String note);
+    void createGuideNote(String title, String note);
 
     /**
      * create a guide note
@@ -18,7 +19,7 @@ public interface IGuideNoteComponent {
      * @param location location attached to note
      * @return the a new GuideNote
      */
-    GuideNote createGuideNote(String note, Location location);
+    void createGuideNote(String title, String note, Location location);
 
     /**
      * send a GuideNote to a helpee

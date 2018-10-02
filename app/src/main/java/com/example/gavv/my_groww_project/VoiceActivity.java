@@ -54,7 +54,7 @@ public class VoiceActivity extends AppCompatActivity {
 
 
     // if the url is changed it will also have to be change on the TwiML App: GROWW_voice_activity
-    private static final String TWILIO_ACCESS_TOKEN_SERVER_URL = "https://12fd887d.ngrok.io//accessToken";
+    private static final String TWILIO_ACCESS_TOKEN_SERVER_URL = "https://934e1dc1.ngrok.io/accessToken";
 
     private static final int MIC_PERMISSION_REQUEST_CODE = 1;
     private static final int SNACKBAR_DURATION = 4000;

@@ -57,7 +57,7 @@ public class SignUpHelper extends Activity {
             }
         });
     }
-
+    // Function to create a firebase account
     private void createAccount(String email, String password){
         mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             public static final String TAG = "GROWW_App" ;

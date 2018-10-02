@@ -1,11 +1,12 @@
 package models;
 
-public class LocationGuideNote extends GuideNote {
+import android.location.Location;
+
+public class LocationGuideNote {
 
     private Location location;
 
     public LocationGuideNote(String content, Location location){
-        super(content);
         setLocation(location);
     }
 
