@@ -208,8 +208,6 @@ public class FriendsFragment extends Fragment {
                                                 }
 
                                                 // Send message
-
-
                                                 if(i == 1){
 
                                                     Intent chatIntent = new Intent(getContext(), ChatActivity.class);
