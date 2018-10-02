@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ import java.util.Map;
 import controllers.GuideNoteController;
 import controllers.LocationController;
 import controllers.NavigationController;
+import models.CompassDirection;
 
 public class HelpeeMapsActivity extends AppCompatActivity {
 
@@ -61,8 +64,9 @@ public class HelpeeMapsActivity extends AppCompatActivity {
     private Button requestButton;
     private String helperUid;
 
+    private ImageView arrowImage;
     private NavigationController navigationController;
-    private List<LatLng> routesToDestination;
+    private List<CompassDirection> compassDirections;
 
 
 
@@ -192,7 +196,15 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                     destinationLocation.setLongitude(dataSnapshot.child("l").child("1")
                             .getValue(Double.class));
 
+                    // Set the destination on the LocationController.
+                    userLocationController.setDestinationLocation(destinationLocation);
+
                     // Get the compass direction relative to the destination.
+                    compassDirections = navigationController.getCompassDirection(
+                            userLocationController.getUserLocation(), destinationLocation);
+
+                    // Set the arrow to the angle.
+                    arrowImage.setRotation(compassDirections.get(0).getDirection());
 
 
                     TextView destinationTextView = (TextView) findViewById(R.id.destination);
@@ -265,6 +277,16 @@ public class HelpeeMapsActivity extends AppCompatActivity {
                 "On Faraday Street Take Bus no. 767");
         guideNoteController.createGuideNote("University of Melbourne",
                 "Get off at University of Melbourne Stop");
+
+        // Initialise the ImageView
+        arrowImage = (ImageView) findViewById(R.id.arrowImage);
+
+        // Need this to be able to download JSON from URL.
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy =
+                    new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 
 
         // Initialise the location manager and location listener to get the the helpee's location.
