@@ -22,6 +22,8 @@ android {
     }
 }
 
+repositories { jcenter() }
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.theartofdev.edmodo:android-image-cropper:2.7.0'
@@ -57,6 +59,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
     implementation 'com.github.bumptech.glide:glide:3.6.1'
 
@@ -83,6 +86,9 @@ dependencies {
 
     // Needed to able to show notification.
     implementation "com.android.support:support-compat:27.1.1"
+
+    // Import Mockito
+    testCompile "org.mockito:mockito-core:2.+"
 }
 
 apply plugin: 'com.google.gms.google-services'
