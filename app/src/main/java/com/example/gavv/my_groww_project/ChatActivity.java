@@ -89,6 +89,7 @@ public class ChatActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_chat);
 
         mChatToolbar = (Toolbar) findViewById(R.id.chat_app_bar);
@@ -280,9 +281,7 @@ public class ChatActivity extends AppCompatActivity {
                     .child(mCurrentUserId).child(mChatUser).push();
 
             final String push_id = user_message_push.getKey();
-
-
-            StorageReference filepath = mImageStorage.child("message_images").child( push_id + ".jpg");
+            StorageReference filepath = mImageStorage.child("message_images").child(push_id + ".jpg");
 
             filepath.putFile(imageUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
