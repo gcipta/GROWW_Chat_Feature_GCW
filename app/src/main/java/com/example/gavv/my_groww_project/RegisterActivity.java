@@ -154,6 +154,9 @@ public class RegisterActivity extends AppCompatActivity {
                             }
                         }
                     });
+
+                    // Verified the account through email
+                    current_user.sendEmailVerification();
                 }
 
                 // Generate Toast error
