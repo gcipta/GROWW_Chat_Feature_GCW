@@ -22,12 +22,15 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"> <!-- Make an offline capabilities -->
         <!-- Firebase Messaging Services -->
+
+        <!-- this is for gavins message chat, but it ruins my voice chat
+
         <service android:name=".FirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
+        -->
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -50,6 +53,30 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" /> <!-- optional (needed if default theme has no action bar) -->
 
+        <activity
+            android:name=".VoiceActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- [START fcm_listener] -->
+        <service
+            android:name=".fcm.VoiceFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- [END fcm_listener] -->
+        <!-- [START instanceId_listener] -->
+        <service
+            android:name=".fcm.VoiceFirebaseInstanceIDService" >
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <!-- Users Activity -->
         <activity
@@ -63,7 +90,7 @@
             </intent-filter>
         </activity>
 
-        <!-- Chat Activity -->
+        <!-- Chat Acivity -->
         <activity
             android:name=".ChatActivity"
             android:parentActivityName=".MainActivity" />

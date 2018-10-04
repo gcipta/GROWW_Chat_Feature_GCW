@@ -50,11 +50,12 @@ import java.util.HashMap;
 public class VoiceActivity extends AppCompatActivity {
 
     private static final String TAG = "VoiceActivity";
-    private static String identity = "alice";
+    private static String identity;
+    private static String contact_id;
 
 
     // if the url is changed it will also have to be change on the TwiML App: GROWW_voice_activity
-    private static final String TWILIO_ACCESS_TOKEN_SERVER_URL = "https://934e1dc1.ngrok.io/accessToken";
+    private static final String TWILIO_ACCESS_TOKEN_SERVER_URL = "https://79d4d011.ngrok.io/accessToken";
 
     private static final int MIC_PERMISSION_REQUEST_CODE = 1;
     private static final int SNACKBAR_DURATION = 4000;
@@ -93,6 +94,22 @@ public class VoiceActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // get the user identity of the person to call
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                identity = null;
+                contact_id = null;
+            } else {
+                identity = extras.getString("user_id");
+                contact_id = extras.getString("contact_id");
+            }
+        } else {
+            identity = (String) savedInstanceState.getSerializable("user_id");
+            contact_id = (String) savedInstanceState.getSerializable("contact_id");
+        }
+
         setContentView(R.layout.activity_voice);
 
         // These flags ensure that the activity can be launched when the screen is locked.
@@ -326,7 +343,8 @@ public class VoiceActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 // Place a call
                 EditText contact = (EditText) ((AlertDialog) dialog).findViewById(R.id.contact);
-                twiMLParams.put("to", contact.getText().toString());
+                //twiMLParams.put("to", contact.getText().toString());
+                twiMLParams.put("to", contact_id);
                 activeCall = Voice.call(VoiceActivity.this, accessToken, twiMLParams, callListener);
                 setCallUI();
                 alertDialog.dismiss();

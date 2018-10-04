@@ -50,6 +50,11 @@ public class VoiceFirebaseMessagingService extends FirebaseMessagingService {
      */
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        System.out.println("message type: " + remoteMessage.getMessageType());
+        System.out.println("message id: " + remoteMessage.getMessageId());
+        System.out.println("message data: " + remoteMessage.getData());
+
+
         Log.d(TAG, "Received onMessageReceived()");
         Log.d(TAG, "Bundle data: " + remoteMessage.getData());
         Log.d(TAG, "From: " + remoteMessage.getFrom());

@@ -158,133 +158,141 @@ public class FriendsFragment extends Fragment {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                final String userName = dataSnapshot.child("name").getValue().toString();
-                                final String userRole = dataSnapshot.child("role").getValue().toString();
-                                final String userDisplay = "[" + userRole + "] " + userName;
+                                if(dataSnapshot.exists() && dataSnapshot.hasChild("name") && dataSnapshot.hasChild("role")) {
+                                    final String userName = dataSnapshot.child("name").getValue().toString();
+                                    final String userRole = dataSnapshot.child("role").getValue().toString();
+                                    final String userDisplay = "[" + userRole + "] " + userName;
 
-                                String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
-
-                                if(dataSnapshot.hasChild("online")) {
-
-                                    String userOnline = dataSnapshot.child("online").getValue().toString();
-                                    friendsViewHolder.setUserOnline(userOnline);
-
-                                }
-
-                                friendsViewHolder.setName(userDisplay);
-                                friendsViewHolder.setUserImage(userThumb, getContext());
-
-                                friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-
-                                        CharSequence options[] = new CharSequence[]{"Open Profile", "Send message"};
+                                    String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
 
 
-                                        if(userRole.equals("helper") && mRole.equals("helpee") &&
-                                                !mMakingRequest){
+                                    if (dataSnapshot.hasChild("online")) {
 
-                                            options = new CharSequence[]{"Open Profile", "Send message", "Send Help Request"};
+                                        String userOnline = dataSnapshot.child("online").getValue().toString();
+                                        friendsViewHolder.setUserOnline(userOnline);
 
-                                        }
+                                    }
 
+                                    friendsViewHolder.setName(userDisplay);
+                                    friendsViewHolder.setUserImage(userThumb, getContext());
 
+                                    friendsViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
 
-                                        final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-
-                                        builder.setTitle("Select Options");
-                                        builder.setItems(options, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                //Click Event for each item.
-                                                //Go to profile
-                                                if(i == 0){
-
-                                                    Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
-                                                    profileIntent.putExtra("user_id", list_user_id);
-                                                    startActivity(profileIntent);
-
-                                                }
-
-                                                // Send message
+                                            CharSequence options[] = new CharSequence[]{"Open Profile", "Send message", "Voice Call"};
 
 
-                                                if(i == 1){
+                                            if (userRole.equals("helper") && mRole.equals("helpee") &&
+                                                    !mMakingRequest) {
 
-                                                    Intent chatIntent = new Intent(getContext(), ChatActivity.class);
-                                                    chatIntent.putExtra("user_id", list_user_id);
-                                                    chatIntent.putExtra("user_name", userName);
-                                                    startActivity(chatIntent);
-
-                                                }
-
-                                                // Send a help request
-                                                if (i == 2) {
-
-                                                    // Check if the helper is helping others or not.
-                                                    DatabaseReference mIsHelpingHelperRef =
-                                                            FirebaseDatabase.getInstance()
-                                                            .getReference()
-                                                            .child("users")
-                                                            .child(list_user_id)
-                                                            .child("isHelping");
-
-
-                                                    mIsHelpingHelperRef.addValueEventListener(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                                                            if(dataSnapshot.exists()) {
-
-                                                                if (!dataSnapshot.getValue(boolean.class)) {
-                                                                    isHelperHelping = dataSnapshot.getValue(boolean.class);
-
-                                                                } else {
-                                                                    Log.d("Helper Status", "Your Helper is busy, please try to request help from another helper!");
-                                                                }
-                                                            }
-                                                        }
-
-                                                        @Override
-                                                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                                                        }
-                                                    });
-
-                                                    if (!isHelperHelping) {
-                                                        // Set the making request flag on helpee's position to be true.
-                                                        DatabaseReference mHelpeeRef = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrent_user_id);
-                                                        mHelpeeRef.child("makingRequest").setValue(true);
-
-                                                        // Include the helper UID on the helpee's position.
-                                                        HashMap<String, Object> helperInfo = new HashMap<>();
-                                                        helperInfo.put("helperUid", list_user_id);
-                                                        mHelpeeRef.updateChildren(helperInfo);
-
-                                                        // Set the helping flag on helper's position to be true
-                                                        DatabaseReference mHelperRef = FirebaseDatabase.getInstance().getReference().child("users").child(list_user_id);
-                                                        mHelperRef.child("isHelping").setValue(true);
-
-                                                        // Include the helpee UID on the helper's position.
-                                                        HashMap<String, Object> request = new HashMap<String, Object>();
-                                                        request.put("requestHelpeeID", FirebaseAuth.getInstance().getCurrentUser()
-                                                                .getUid());
-                                                        mHelperRef.updateChildren(request);
-
-                                                        Intent requestIntent = new Intent(getContext(), HelpeeMapsActivity.class);
-                                                        requestIntent.putExtra("helper_id", list_user_id);
-                                                        startActivity(requestIntent);
-                                                    }
-                                                }
-
+                                                options = new CharSequence[]{"Open Profile", "Send message", "Voice Call", "Send Help Request"};
 
                                             }
-                                        });
 
-                                        builder.show();
-                                    }
-                                });
+
+                                            final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+
+                                            builder.setTitle("Select Options");
+                                            builder.setItems(options, new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                                    //Click Event for each item.
+                                                    //Go to profile
+                                                    if (i == 0) {
+
+                                                        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+                                                        profileIntent.putExtra("user_id", list_user_id);
+                                                        startActivity(profileIntent);
+
+                                                    }
+
+                                                    // Send message
+                                                    if (i == 1) {
+
+                                                        Intent chatIntent = new Intent(getContext(), ChatActivity.class);
+                                                        chatIntent.putExtra("user_id", list_user_id);
+                                                        chatIntent.putExtra("user_name", userName);
+                                                        startActivity(chatIntent);
+
+                                                    }
+
+                                                    // Send a help request
+                                                    if (i == 3) {
+
+                                                        // Check if the helper is helping others or not.
+                                                        DatabaseReference mIsHelpingHelperRef =
+                                                                FirebaseDatabase.getInstance()
+                                                                        .getReference()
+                                                                        .child("users")
+                                                                        .child(list_user_id)
+                                                                        .child("isHelping");
+
+
+                                                        mIsHelpingHelperRef.addValueEventListener(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                                                                if (dataSnapshot.exists()) {
+
+                                                                    if (!dataSnapshot.getValue(boolean.class)) {
+                                                                        isHelperHelping = dataSnapshot.getValue(boolean.class);
+
+                                                                    } else {
+                                                                        Log.d("Helper Status", "Your Helper is busy, please try to request help from another helper!");
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                                            }
+                                                        });
+
+                                                        if (!isHelperHelping) {
+                                                            // Set the making request flag on helpee's position to be true.
+                                                            DatabaseReference mHelpeeRef = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrent_user_id);
+                                                            mHelpeeRef.child("makingRequest").setValue(true);
+
+                                                            // Include the helper UID on the helpee's position.
+                                                            HashMap<String, Object> helperInfo = new HashMap<>();
+                                                            helperInfo.put("helperUid", list_user_id);
+                                                            mHelpeeRef.updateChildren(helperInfo);
+
+                                                            // Set the helping flag on helper's position to be true
+                                                            DatabaseReference mHelperRef = FirebaseDatabase.getInstance().getReference().child("users").child(list_user_id);
+                                                            mHelperRef.child("isHelping").setValue(true);
+
+                                                            // Include the helpee UID on the helper's position.
+                                                            HashMap<String, Object> request = new HashMap<String, Object>();
+                                                            request.put("requestHelpeeID", FirebaseAuth.getInstance().getCurrentUser()
+                                                                    .getUid());
+                                                            mHelperRef.updateChildren(request);
+
+                                                            Intent requestIntent = new Intent(getContext(), HelpeeMapsActivity.class);
+                                                            requestIntent.putExtra("helper_id", list_user_id);
+                                                            startActivity(requestIntent);
+                                                        }
+                                                    }
+
+                                                    // go to voice chat
+                                                    if (i == 2) {
+                                                        Intent voiceIntent = new Intent(getContext(), VoiceActivity.class);
+                                                        voiceIntent.putExtra("user_id", mCurrent_user_id);
+                                                        voiceIntent.putExtra("contact_id", list_user_id);
+                                                        startActivity(voiceIntent);
+
+                                                    }
+
+                                                }
+                                            });
+
+                                            builder.show();
+                                        }
+                                    });
+                                }
                             }
 
                             @Override
