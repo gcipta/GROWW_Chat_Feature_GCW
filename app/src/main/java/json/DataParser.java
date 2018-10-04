@@ -64,7 +64,7 @@ public class DataParser {
      * @param maneuverJson
      * @return a list of LatLng from the source to the destination.
      */
-    private List<LatLng> getRoutes(JSONArray maneuverJson) {
+    public List<LatLng> getRoutes(JSONArray maneuverJson) {
 
         int count = maneuverJson.length();
 

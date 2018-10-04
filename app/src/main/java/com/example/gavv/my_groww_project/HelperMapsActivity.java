@@ -156,6 +156,12 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         helpeeLocation.getLongitude());
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
                         mMap.getCameraPosition().zoom));
+
+                // Show the direction if the helper has sent a destination to the helpee
+                if (isGuiding) {
+                    startDirection();
+                }
+
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
                         15));
@@ -432,7 +438,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                     LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
                             helpeeLocation.getLongitude());
 
-                    showHelpeeLocation();
+                   centerMapOnLocation("Your Location");
                     Log.d("Helpee Lat Lng", helpeeLatLng.toString());
                 }
             }
@@ -484,9 +490,6 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .icon(BitmapDescriptorFactory.defaultMarker(
                         BitmapDescriptorFactory.HUE_ORANGE)))
                 .setDraggable(false);
-
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
-                15));
 
     }
 
