@@ -13,6 +13,31 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true" />
 
+    <Button
+        android:id="@+id/requestButton"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="45dp"
+        android:background="@color/colorPrimary"
+        android:text="Cancel Request"
+        android:textColor="@color/colorAccent" />
+
+    <ImageView
+        android:id="@+id/arrowImage"
+        android:layout_width="135dp"
+        android:layout_height="163dp"
+        android:layout_centerInParent="true"
+        app:srcCompat="@drawable/uparrowwhitebg" />
+
+    <TextView
+        android:id="@+id/destination"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="120dp" />
 
 
 </RelativeLayout>

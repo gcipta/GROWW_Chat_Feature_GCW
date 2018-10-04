@@ -1,5 +1,6 @@
 package com.example.gavv.my_groww_project;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -17,16 +18,14 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.Manifest;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -45,6 +44,12 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -55,11 +60,12 @@ import java.util.Locale;
 import adapter.PlaceAutocompleteAdapter;
 import controllers.LocationController;
 import controllers.NavigationController;
+import controllers.NotificationController;
 
 public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCallback,
         GoogleMap.OnMapLongClickListener,
         GoogleMap.OnMarkerDragListener,
-        GoogleApiClient.OnConnectionFailedListener{
+        GoogleApiClient.OnConnectionFailedListener {
 
     private GoogleMap mMap;
 
@@ -84,6 +90,15 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     private GoogleApiClient mGoogleApiClient;
 
     private LatLngBounds latLngBounds;
+
+    private static final DatabaseReference ROOT_REF =
+            FirebaseDatabase.getInstance().getReference();
+    private static final DatabaseReference USER_REF = ROOT_REF.child("users");
+    private static final String HELPER_UID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+    private String helpeeUid = "";
+    private DatabaseReference mHelpeeDest;
+    private Location helpeeLocation = null;
 
 
     /**
@@ -132,7 +147,14 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                                 BitmapDescriptorFactory.HUE_BLUE)))
                         .setDraggable(true);
 
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
+            }
+
+            // Show helpee's location
+            if (helpeeLocation != null) {
+                showHelpeeLocation();
+                LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
+                        helpeeLocation.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
                         mMap.getCameraPosition().zoom));
             } else {
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,
@@ -169,13 +191,34 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         isGuiding = true;
 
+        // Remove the previous path from the map.
+        if (direction != null) {
+            direction.remove();
+        }
+
         // Ensure the destination is not null.
-        if (userLocationController.getDestinationLocation() != null) {
+        if (helpeeLocation != null) {
+
+            // Find the destination
+            direction = navigationController.displayDirection(
+                    helpeeLocation,
+                    userLocationController.getDestinationLocation());
+        } else if (userLocationController.getDestinationLocation() != null && helpeeLocation == null) {
 
             // Find the destination
             direction = navigationController.displayDirection(
                     userLocationController.getUserLocation(),
                     userLocationController.getDestinationLocation());
+        }
+
+
+        // If it is impossible to get to the destination, display an error message.
+        if (direction == null) {
+
+            Toast.makeText(HelperMapsActivity.this,
+                    "The destination is not achieveable. " +
+                            "Try different transportation mode or pick another destination point.",
+                    Toast.LENGTH_LONG).show();
         }
     }
 
@@ -229,7 +272,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * Set a button to show a direction from user's location to the chosen destination.
      */
-    private void initDirectionButton() {
+    private void confirmDestinationButton() {
 
         // Show the direction to the destination.
         directionButton = (Button) findViewById(R.id.directionButton);
@@ -239,7 +282,18 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
             public void onClick(View v) {
 
                 if (userLocationController.getDestinationLocation() != null) {
+
                     startDirection();
+
+                    // Send the destination to the Helpee.
+                    DatabaseReference helpeeDestRef = USER_REF.child(helpeeUid);
+                    GeoFire geoFire = new GeoFire(helpeeDestRef);
+
+                    geoFire.setLocation("destination", new GeoLocation(
+                            userLocationController.getDestinationLocation().getLatitude(),
+                            userLocationController.getDestinationLocation().getLongitude()));
+
+
                 } else {
                     Toast.makeText(HelperMapsActivity.this,
                             "You have not chosen any destination yet!",
@@ -298,7 +352,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
         latLngBounds = new LatLngBounds(userLatLng, boundLatLng);
 
-         // Initialise the Autocomplete Adapter
+        // Initialise the Autocomplete Adapter
         mPlaceAutoCompleteAdapter = new PlaceAutocompleteAdapter(this,
                 Places.getGeoDataClient(this),
                 latLngBounds, null);
@@ -314,6 +368,125 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         inputSearch.requestFocus();
 
         inputSearch.setOnItemClickListener(mAutocompleteClickListener);
+
+    }
+
+    /**
+     * A function to check if there is a request from the helpee.
+     */
+    private void checkRequest() {
+
+        DatabaseReference mHelpeeId = USER_REF
+                .child(HELPER_UID).child("requestHelpeeID");
+
+        mHelpeeId.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+                    helpeeUid = dataSnapshot.getValue(String.class);
+
+                    // Initialise the database reference to store the destination for the helpee.
+                    mHelpeeDest = USER_REF.child(helpeeUid);
+
+                    getHelpeeLocation();
+
+                    Log.d("Request from Helpee", helpeeUid);
+                } else {
+
+                    helpeeLocation = null;
+                    userLocationController.setDestinationLocation(null);
+                    centerMapOnLocation("Your Location");
+
+                    Log.d("Request from Helpee", "NO REQUEST");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * A function to retrieve the helpee's location from the database.
+     */
+    private void getHelpeeLocation() {
+
+        DatabaseReference helpeeLocRef = ROOT_REF.child("Requests").child(helpeeUid);
+
+        helpeeLocRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                // Get the latitude and longitude of the helpee.
+                if (dataSnapshot.exists()) {
+
+                    helpeeLocation = new Location("");
+                    helpeeLocation.setLatitude((Double) dataSnapshot.child("latitude")
+                            .getValue(Double.class));
+                    helpeeLocation.setLongitude((Double) dataSnapshot.child("longitude")
+                            .getValue(Double.class));
+
+                    LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
+                            helpeeLocation.getLongitude());
+
+                    showHelpeeLocation();
+                    Log.d("Helpee Lat Lng", helpeeLatLng.toString());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        // Check the destination of the helpee (in case we have given the destination before).
+        DatabaseReference helpeeDestRef = USER_REF.child(helpeeUid).child("destination");
+
+        helpeeDestRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                if (dataSnapshot.exists()) {
+
+                    Location helpeeDestination = new Location("");
+                    helpeeDestination.setLatitude((Double) dataSnapshot.child("l").child("0")
+                            .getValue(Double.class));
+                    helpeeDestination.setLongitude((Double) dataSnapshot.child("l").child("1")
+                            .getValue(Double.class));
+                    userLocationController.setDestinationLocation(helpeeDestination);
+                    centerMapOnLocation("Your Location");
+                    startDirection();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+    /**
+     * A function to show helpee's location on the map.
+     */
+    private void showHelpeeLocation() {
+
+        LatLng helpeeLatLng = new LatLng(helpeeLocation.getLatitude(),
+                helpeeLocation.getLongitude());
+
+        mMap.addMarker(new MarkerOptions().position(helpeeLatLng)
+                .title("Your Helpee's Location")
+                .icon(BitmapDescriptorFactory.defaultMarker(
+                        BitmapDescriptorFactory.HUE_ORANGE)))
+                .setDraggable(false);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(helpeeLatLng,
+                15));
 
     }
 
@@ -351,7 +524,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
             final Place place = places.get(0);
 
-            Log.d("Place details:",  "LatLng: " + place.getLatLng());
+            Log.d("Place details:", "LatLng: " + place.getLatLng());
             Log.d("Place details: ", "Address" + place.getAddress());
 
             // Update the destination and show it.
@@ -372,6 +545,28 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
     };
 
+    /**
+     * Get the last known location.
+     * @return last known location.
+     */
+    private Location getLastKnownLocation() {
+        locationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);
+        List<String> providers = locationManager.getProviders(true);
+        Location bestLocation = null;
+        for (String provider : providers) {
+            @SuppressLint("MissingPermission") Location l =
+                    locationManager.getLastKnownLocation(provider);
+            if (l == null) {
+                continue;
+            }
+            if (bestLocation == null || l.getAccuracy() < bestLocation.getAccuracy()) {
+                // Found best last known location: %s", l);
+                bestLocation = l;
+            }
+        }
+        return bestLocation;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -391,12 +586,19 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-
         // Set on-click-listener function on the button.
         initUserLocationDetailsButton();
         initDestinationLocationDetailsButton();
-        initDirectionButton();
+        confirmDestinationButton();
         initZoomButton();
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        checkRequest();
 
     }
 
@@ -434,10 +636,7 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                 // If the app is guiding the user, then it will update the direction.
                 if (isGuiding) {
-                    direction.remove();
-                    direction = navigationController.displayDirection(
-                            userLocationController.getUserLocation(),
-                            userLocationController.getDestinationLocation());
+                    startDirection();
                 }
 
             }
@@ -481,16 +680,16 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
                         5000, 0, locationListener);
 
 
-                this.userLocationController.setUserLocation(locationManager.
-                        getLastKnownLocation(LocationManager.GPS_PROVIDER));
+                this.userLocationController.setUserLocation(getLastKnownLocation());
 
                 if (this.userLocationController.getUserLocation() != null) {
+
+                    initSearchBar();
                     centerMapOnLocation("Your Location");
                 }
             }
         }
 
-        initSearchBar();
     }
 
     @Override
@@ -566,15 +765,15 @@ public class HelperMapsActivity extends FragmentActivity implements OnMapReadyCa
         }
 
         Log.d("Destination Location", "To" + marker.getPosition().latitude + ", "
-        + marker.getPosition().longitude);
+                + marker.getPosition().longitude);
 
         marker.setTitle(userLocationController.getDestinationDetails());
 
         // If it is still guiding, then it will give a new direction.
         if (isGuiding) {
-            direction = navigationController.displayDirection(
-                    userLocationController.getUserLocation(),
-                    userLocationController.getDestinationLocation());
+
+            startDirection();
+
         }
 
     }

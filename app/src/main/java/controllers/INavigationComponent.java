@@ -16,11 +16,11 @@ public interface INavigationComponent {
     /**
      * set the compass direction for a helpee headed to a specified target
      *
-     * @param helpee the location of the helpee
-     * @param target the target location, that the helpee headed towards
+     * @param startPoint the location of the helpee
+     * @param endPoint the target location, that the helpee headed towards
      * @return the compass direction required for the helpee
      */
-    CompassDirection setCompass(Location helpee, Location target);
+    CompassDirection setCompass(Location startPoint, Location endPoint);
 
     /**
      * edit a compass direction
@@ -35,7 +35,12 @@ public interface INavigationComponent {
      *
      * @param direc the compass direction to be displayed
      */
-    void displayCompassDirection(CompassDirection direc);
+
+    /**
+     * display the compass direction to the UI
+     * @return list of compass direction
+     */
+    List<CompassDirection> getCompassDirection(Location userLocation, Location destinationLocation);
 
     /**
      * display the direction from the user's location to the destination on the map.

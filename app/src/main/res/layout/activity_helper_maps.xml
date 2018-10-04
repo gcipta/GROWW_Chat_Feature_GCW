@@ -51,56 +51,66 @@
             android:ellipsize="start"
             android:textColor="#000"
             android:imeOptions="actionSearch"
+            android:inputType="text"
             android:textSize="15sp" />
     </RelativeLayout>
 
 
     <Button
         android:id="@+id/showUserDetailsButton"
-        android:layout_width="wrap_content"
+        android:layout_width="220dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="161dp"
-        android:text="Show User Location Details" />
+        android:text="Show User Location Details"
+        android:textColor="@color/colorAccent"
+        android:background="@color/colorPrimary"/>
 
     <Button
         android:id="@+id/showDestinationDetailsButton"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="102dp"
-        android:text="Show Destination Details" />
+        android:text="Show Destination Details"
+        android:textColor="@color/colorAccent"
+        android:background="@color/colorPrimary"/>
 
     <Button
         android:id="@+id/directionButton"
-        android:layout_width="wrap_content"
+        android:layout_width="180dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="39dp"
-        android:text="Directions" />
+        android:text="Confirm Destination"
+        android:textColor="@color/colorAccent"
+        android:background="@color/colorPrimary"/>
 
     <Button
         android:id="@+id/zoomInButton"
         android:layout_width="56dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/map"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
         android:layout_marginEnd="60dp"
-        android:text="+" />
+        android:layout_marginTop="242dp"
+        android:background="@color/colorPrimary"
+        android:text="+"
+        android:textColor="@color/colorAccent" />
 
     <Button
         android:id="@+id/zoomOutButton"
         android:layout_width="56dp"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/map"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/zoomInButton"
         android:layout_marginStart="60dp"
-        android:layout_centerVertical="true"
-        android:text="- " />
+        android:background="@color/colorPrimary"
+        android:text="- "
+        android:textColor="@color/colorAccent" />
 
 </RelativeLayout>
 

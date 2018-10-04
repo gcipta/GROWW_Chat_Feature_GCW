@@ -13,28 +13,29 @@
                       <PersistentState>
                         <option name="children">
                           <map>
-                            <entry key="actionbar">
+                            <entry key="notification">
                               <value>
                                 <PersistentState>
                                   <option name="children">
                                     <map>
-                                      <entry key="clipArt">
+                                      <entry key="text">
                                         <value>
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="paddingPercent" value="-10" />
+                                                <entry key="paddingPercent" value="10" />
                                               </map>
                                             </option>
                                           </PersistentState>
                                         </value>
                                       </entry>
-                                      <entry key="clipartAsset">
+                                      <entry key="textAsset">
                                         <value>
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/action/ic_search_black_24dp.xml" />
+                                                <entry key="fontFamily" value="Rockwell" />
+                                                <entry key="text" value="GROWW" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -44,9 +45,7 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="outputName" value="ic_magnify" />
-                                      <entry key="theme" value="CUSTOM" />
-                                      <entry key="themeColor" value="000000" />
+                                      <entry key="assetType" value="TEXT" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -56,7 +55,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputIconType" value="ACTIONBAR" />
+                            <entry key="outputIconType" value="NOTIFICATION" />
                           </map>
                         </option>
                       </PersistentState>
