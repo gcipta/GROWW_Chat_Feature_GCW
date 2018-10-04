@@ -34,16 +34,16 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class ChatsFragment extends Fragment {
 
-    private RecyclerView mRequestList;
+    private RecyclerView mChatList;
 
-    private DatabaseReference mRequestDatabase;
+    private DatabaseReference mChatDatabase;
     private DatabaseReference mUsersDatabase;
 
     private FirebaseAuth mAuth;
 
     private String mCurrent_user_id;
 
-    private View mRequestView;
+    private View mChatView;
 
 
     public ChatsFragment() {
@@ -57,24 +57,24 @@ public class ChatsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mRequestView = inflater.inflate(R.layout.fragment_request, container, false);
+        mChatView = inflater.inflate(R.layout.fragment_chat, container, false);
 
-        mRequestList = (RecyclerView) mRequestView.findViewById(R.id.request_list);
+        mChatList = (RecyclerView) mChatView.findViewById(R.id.chat_list);
         mAuth = FirebaseAuth.getInstance();
 
         mCurrent_user_id = mAuth.getCurrentUser().getUid();
 
-        mRequestDatabase = FirebaseDatabase.getInstance().getReference().child("Friend_req").child(mCurrent_user_id);
-        mRequestDatabase.keepSynced(true);
+        mChatDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
+        mChatDatabase.keepSynced(true);
 
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("users");
         mUsersDatabase.keepSynced(true);
 
-        mRequestList.setHasFixedSize(true);
-        mRequestList.setLayoutManager(new LinearLayoutManager(getContext()));
+        mChatList.setHasFixedSize(true);
+        mChatList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inflate the layout for this fragment
-        return mRequestView;
+        return mChatView;
     }
 
 
@@ -86,18 +86,18 @@ public class ChatsFragment extends Fragment {
 
         FirebaseRecyclerOptions<Friends> options =
                 new FirebaseRecyclerOptions.Builder<Friends>()
-                        .setQuery(mRequestDatabase, Friends.class)
+                        .setQuery(mChatDatabase, Friends.class)
                         .setLifecycleOwner(this)
                         .build();
 
 
-        FirebaseRecyclerAdapter<Friends, RequestFragment.RequestViewHolder> firebaseRecyclerAdapter =
-                new FirebaseRecyclerAdapter<Friends, RequestFragment.RequestViewHolder>(options) {
+        FirebaseRecyclerAdapter<Friends, ChatsFragment.ChatViewHolder> firebaseRecyclerAdapter =
+                new FirebaseRecyclerAdapter<Friends, ChatsFragment.ChatViewHolder>(options) {
                     @Override
-                    protected void onBindViewHolder(@NonNull final RequestFragment.RequestViewHolder requestViewHolder, int position, @NonNull Friends friends) {
+                    protected void onBindViewHolder(@NonNull final ChatsFragment.ChatViewHolder chatViewHolder, int position, @NonNull Friends friends) {
 
                         // UNDER CONSTRUCTION
-                        requestViewHolder.setDate(friends.getDate());
+                        chatViewHolder.setDate(friends.getDate());
 
                         final String list_user_id = getRef(position).getKey();
 
@@ -112,14 +112,14 @@ public class ChatsFragment extends Fragment {
                                     if (dataSnapshot.hasChild("online")) {
 
                                         String userOnline = dataSnapshot.child("online").getValue().toString();
-                                        requestViewHolder.setUserOnline(userOnline);
+                                        chatViewHolder.setUserOnline(userOnline);
 
                                     }
 
-                                    requestViewHolder.setName(userName);
-                                    requestViewHolder.setUserImage(userThumb, getContext());
+                                    chatViewHolder.setName(userName);
+                                    chatViewHolder.setUserImage(userThumb, getContext());
 
-                                    requestViewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                    chatViewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
 
@@ -145,22 +145,22 @@ public class ChatsFragment extends Fragment {
 
                     @NonNull
                     @Override
-                    public RequestFragment.RequestViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-                        return new RequestFragment.RequestViewHolder(LayoutInflater.from(viewGroup.getContext())
+                    public ChatsFragment.ChatViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
+                        return new ChatsFragment.ChatViewHolder(LayoutInflater.from(viewGroup.getContext())
                                 .inflate(R.layout.users_single_layout, viewGroup, false));
                     }
                 };
 
-        mRequestList.setAdapter(firebaseRecyclerAdapter);
+        mChatList.setAdapter(firebaseRecyclerAdapter);
 
 
     }
 
-    public static class RequestViewHolder extends RecyclerView.ViewHolder {
+    public static class ChatViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
 
-        public RequestViewHolder(View itemView) {
+        public ChatViewHolder(View itemView) {
             super(itemView);
 
             mView = itemView;
