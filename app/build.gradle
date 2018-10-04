@@ -87,6 +87,13 @@ dependencies {
     // Needed to able to show notification.
     implementation "com.android.support:support-compat:27.1.1"
 
+
+    // voice activity
+    implementation 'com.twilio:voice-android:2.0.9'
+    implementation 'com.koushikdutta.ion:ion:2.1.8'
+    implementation 'com.squareup.retrofit:retrofit:1.9.0'
+    implementation 'com.google.firebase:firebase-messaging:17.3.1'
+
     // Import Mockito
     testCompile "org.mockito:mockito-core:2.+"
 }

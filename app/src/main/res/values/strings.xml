@@ -31,4 +31,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="default_status">Let\'s Use GROWW App</string>
     <string name="title_activity_helper_maps">Map</string>
+
+    <!-- Strings related to voice chat -->
+    <string name="turn_speaker_on">Speaker ON</string>
+    <string name="callee">client identity</string>
+    <string name="callHint">Dial a client name. Leaving the field empty results in an automated response.</string>
 </resources>
