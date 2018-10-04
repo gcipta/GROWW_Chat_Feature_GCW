@@ -1,4 +1,4 @@
-package com.example.gavv.my_groww_project;
+package com.example.gavv.my_groww_project.fcm;
 
 import android.annotation.TargetApi;
 import android.app.Notification;
@@ -14,16 +14,21 @@ import android.service.notification.StatusBarNotification;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import com.example.gavv.my_groww_project.fcm.VoiceFirebaseMessagingService;
+import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.twilio.voice.CallInvite;
 import com.twilio.voice.MessageException;
 import com.twilio.voice.MessageListener;
 import com.twilio.voice.Voice;
 
+import com.example.gavv.my_groww_project.VoiceActivity;
+import com.example.gavv.my_groww_project.SoundPoolManager;
+import com.example.gavv.my_groww_project.R;
+
+
 import java.util.Map;
 
-public class FirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService {
+public class VoiceFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String TAG = "VoiceFCMService";
     private static final String NOTIFICATION_ID_KEY = "NOTIFICATION_ID";
@@ -38,60 +43,18 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
         notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-
-
+    /**
+     * Called when message is received.
+     *
+     * @param remoteMessage Object representing the message received from Firebase Cloud Messaging.
+     */
     @Override
-    public void onMessageReceived(RemoteMessage remoteMessage){
+    public void onMessageReceived(RemoteMessage remoteMessage) {
         System.out.println("message type: " + remoteMessage.getMessageType());
         System.out.println("message id: " + remoteMessage.getMessageId());
+        System.out.println("message data: " + remoteMessage.getData());
 
 
-    }
-
-
-
-    // text chat notification response
-    public void textChat(RemoteMessage remoteMessage) {
-        super.onMessageReceived(remoteMessage);
-
-        String notification_title = remoteMessage.getNotification().getTitle();
-        String notification_message = remoteMessage.getNotification().getBody();
-
-        String click_action = remoteMessage.getNotification().getClickAction();
-
-        String from_user_id = remoteMessage.getData().get("from_user_id");
-
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.ic_launcher)
-                        .setContentTitle(notification_title)
-                        .setContentText(notification_message);
-
-        // Go to the intent for push notification
-        Intent resultIntent = new Intent(click_action);
-        resultIntent.putExtra("user_id", from_user_id);
-
-        PendingIntent resultPendingIntent =
-                PendingIntent.getActivity(
-                        this,
-                        0,
-                        resultIntent,
-                        PendingIntent.FLAG_UPDATE_CURRENT
-                );
-
-        mBuilder.setContentIntent(resultPendingIntent);
-
-        // Retrieve unique notification ID
-        int mNotificationId = (int) System.currentTimeMillis();
-
-        NotificationManager mNotifyMgr =
-                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
-    }
-
-    // voice chat notification response
-    public void voiceChat(RemoteMessage remoteMessage) {
         Log.d(TAG, "Received onMessageReceived()");
         Log.d(TAG, "Bundle data: " + remoteMessage.getData());
         Log.d(TAG, "From: " + remoteMessage.getFrom());
@@ -103,8 +66,8 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
             Voice.handleMessage(this, data, new MessageListener() {
                 @Override
                 public void onCallInvite(CallInvite callInvite) {
-                    FirebaseMessagingService.this.notify(callInvite, notificationId);
-                    FirebaseMessagingService.this.sendCallInviteToActivity(callInvite, notificationId);
+                    VoiceFirebaseMessagingService.this.notify(callInvite, notificationId);
+                    VoiceFirebaseMessagingService.this.sendCallInviteToActivity(callInvite, notificationId);
                 }
 
                 @Override

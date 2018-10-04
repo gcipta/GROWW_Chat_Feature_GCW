@@ -53,12 +53,14 @@ public class GuideNoteController extends Fragment implements IGuideNoteComponent
         adapter.addGuideNote(guideNote, title);
         adapter.notifyDataSetChanged();
 
+
     }
 
     @Override
     public void createGuideNote(String title, String note, Location location) {
 
     }
+
 
     @Override
     public void sendGuideNote(GuideNote note, int UserID) {
