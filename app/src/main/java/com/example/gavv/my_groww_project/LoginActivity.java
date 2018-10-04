@@ -90,6 +90,9 @@ public class LoginActivity extends AppCompatActivity {
                     String current_user_id = mAuth.getCurrentUser().getUid();
                     String deviceToken = FirebaseInstanceId.getInstance().getToken();
 
+                    // Checking whether it has been verified through email
+                    //mAuth.getCurrentUser().isEmailVerified();
+
                     mUserDatabase.child(current_user_id).child("device_token").setValue(deviceToken).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
